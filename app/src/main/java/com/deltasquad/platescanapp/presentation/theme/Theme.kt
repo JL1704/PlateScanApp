@@ -65,14 +65,14 @@ fun PlateScanAppTheme(
         darkTheme -> DarkColorScheme
         else -> LightColorScheme
     }
-    val view = LocalView.current
+    /*val view = LocalView.current
     if(!view.isInEditMode){
         SideEffect {
             val window = (view.context as Activity).window
-            window.statusBarColor = colorScheme.primary.toArgb()
+            window.statusBarColor = colorScheme.secondary.toArgb()
             WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
         }
-    }
+    }*/
 
     val dimensions = if(windowSize > WindowWidthSizeClass.Compact)
         TabletDimens

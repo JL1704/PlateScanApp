@@ -5,6 +5,7 @@ import androidx.compose.ui.unit.dp
 
 data class Dimens(
     val borderNormal: Dp = 4.dp,
+    val bottomNavViewNormal: Dp = 56.dp,
     val buttonHeightNormal: Dp = 56.dp,
     val iconSizeSmall: Dp = 24.dp,
     val iconSizeNormal: Dp = 36.dp,

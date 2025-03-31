@@ -13,6 +13,7 @@ import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.deltasquad.platescanapp.presentation.home.HomeScreen
 import com.deltasquad.platescanapp.presentation.theme.PlateScanAppTheme
 
 class MainActivity : ComponentActivity() {
@@ -29,28 +30,17 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Greeting(
-                        name = "Android",
-                    )
+                    HomeScreen()
                 }
             }
         }
     }
 }
 
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
 @Preview(showBackground = true)
 @Composable
-fun GreetingPreview() {
+fun AppPreview() {
     PlateScanAppTheme {
-        Greeting("Android")
+        HomeScreen()
     }
 }
