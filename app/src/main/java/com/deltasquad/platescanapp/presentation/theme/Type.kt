@@ -1,4 +1,4 @@
-package com.deltasquad.platescanapp.ui.theme
+package com.deltasquad.platescanapp.presentation.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
