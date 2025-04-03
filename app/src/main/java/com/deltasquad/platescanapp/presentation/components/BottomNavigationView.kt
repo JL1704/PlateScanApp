@@ -1,3 +1,5 @@
+package com.deltasquad.platescanapp.presentation.components
+
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -25,7 +27,7 @@ fun BottomNavigationView(
         modifier = Modifier
             .fillMaxWidth()
             .height(PlateScanAppTheme.dimens.bottomNavViewNormal)
-            .navigationBarsPadding() // Asegura que no se solape con la barra de navegación del sistema
+            .navigationBarsPadding()
     ) {
         items.forEachIndexed { index, item ->
             NavigationBarItem(

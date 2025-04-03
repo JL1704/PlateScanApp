@@ -28,7 +28,7 @@ fun SearchBar(
         leadingIcon = {
             Icon(imageVector = Icons.Default.Search, contentDescription = "Search Icon")
         },
-        placeholder = { Text(text = "Buscar...", fontSize = 16.sp) },
+        placeholder = { Text(text = "Search...", fontSize = 16.sp) },
         shape = RoundedCornerShape(12.dp),
         modifier = modifier
             .fillMaxWidth()

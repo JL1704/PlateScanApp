@@ -1,6 +1,5 @@
 package com.deltasquad.platescanapp.presentation.home
 
-import BottomNavigationView
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -10,7 +9,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.layout.WindowInsets
 import com.deltasquad.platescanapp.presentation.components.PSTopAppBar
-import com.deltasquad.platescanapp.presentation.components.SearchBar // Asegúrate de importar tu SearchBar
+import com.deltasquad.platescanapp.presentation.components.SearchBar
+import com.deltasquad.platescanapp.presentation.components.BottomNavigationView
 import com.deltasquad.platescanapp.presentation.theme.PlateScanAppTheme
 
 @Composable

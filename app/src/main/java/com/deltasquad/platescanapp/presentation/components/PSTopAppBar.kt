@@ -11,7 +11,6 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -27,30 +26,42 @@ import com.deltasquad.platescanapp.presentation.theme.primaryWhite
 fun PSTopAppBar(onMenuClick: () -> Unit) {
     TopAppBar(
         title = {
-            Box(
-                modifier = Modifier.fillMaxWidth(), // Ocupa todo el espacio horizontal
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.logo),
-                    contentDescription = "App Logo",
-                    modifier = Modifier
-                        .height(40.dp)
-                        .align(Alignment.Center) // Centra el logo en el espacio disponible
-                )
+                // Icono del menú
+                IconButton(onClick = onMenuClick) {
+                    Icon(
+                        imageVector = Icons.Default.Menu,
+                        contentDescription = "Menu Icon",
+                        tint = primaryWhite
+                    )
+                }
+
+                // Agregar un Spacer que compense el ancho del IconButton
+                Spacer(modifier = Modifier.width(40.dp)) // Ajusta el valor según sea necesario
+
+                // Logo centrado respecto a la pantalla
+                Box(
+                    modifier = Modifier.weight(1f),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.logo),
+                        contentDescription = "App Logo",
+                        modifier = Modifier.height(40.dp)
+                    )
+                }
+
+                // Spacer vacío para equilibrar el diseño
+                Spacer(modifier = Modifier.width(100.dp)) // Ajusta si es necesario
             }
         },
-        colors = TopAppBarDefaults.topAppBarColors(containerColor = primaryGreen),
-        navigationIcon = {
-            IconButton(onClick = onMenuClick) {
-                Icon(
-                    imageVector = Icons.Default.Menu,
-                    contentDescription = "Menu Icon",
-                    tint = primaryWhite
-                )
-            }
-        }
+        colors = TopAppBarDefaults.topAppBarColors(containerColor = primaryGreen)
     )
 }
+
 
 @Preview(showBackground = true)
 @Composable
