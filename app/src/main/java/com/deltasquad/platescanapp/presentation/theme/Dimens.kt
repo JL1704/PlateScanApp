@@ -4,7 +4,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 data class Dimens(
-    val bottomNavViewHeight: Dp = 92.dp,
+    val bottomNavViewHeight: Dp = 90.dp,
     val imageHeightNormal: Dp = 40.dp,
     val roundedShapeMedium: Dp = 12.dp,
 

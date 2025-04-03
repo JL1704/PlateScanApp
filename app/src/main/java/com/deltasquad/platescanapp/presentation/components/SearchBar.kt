@@ -15,6 +15,13 @@ import androidx.compose.ui.text.TextStyle
 import com.deltasquad.platescanapp.presentation.theme.PlateScanAppTheme
 import androidx.compose.ui.text.style.TextAlign
 
+/**
+ * Composable que representa una barra de búsqueda con un icono de lupa y un campo de texto.
+ *
+ * @param query Texto actual en la barra de búsqueda.
+ * @param onQueryChanged Callback que se ejecuta cuando el texto de búsqueda cambia.
+ * @param modifier Modificador opcional para personalizar la apariencia del componente.
+ */
 @Composable
 fun SearchBar(
     query: String,
@@ -37,6 +44,9 @@ fun SearchBar(
     )
 }
 
+/**
+ * Vista previa del componente SearchBar.
+ */
 @Preview(showBackground = true)
 @Composable
 fun SearchBarPreview() {
@@ -45,4 +55,5 @@ fun SearchBarPreview() {
         SearchBar(query = text, onQueryChanged = { text = it })
     }
 }
+
 

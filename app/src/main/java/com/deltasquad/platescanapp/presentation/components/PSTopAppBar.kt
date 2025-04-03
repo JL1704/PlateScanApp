@@ -13,13 +13,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.foundation.layout.Box
 import androidx.compose.ui.Alignment
 import com.deltasquad.platescanapp.R
 import com.deltasquad.platescanapp.presentation.theme.PlateScanAppTheme
 import com.deltasquad.platescanapp.presentation.theme.primaryGreen
 import com.deltasquad.platescanapp.presentation.theme.primaryWhite
 
+/**
+ * Composable que representa la barra superior de la aplicación.
+ *
+ * @param onMenuClick Callback que se ejecuta al hacer clic en el botón del menú.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PSTopAppBar(onMenuClick: () -> Unit) {
@@ -29,7 +33,7 @@ fun PSTopAppBar(onMenuClick: () -> Unit) {
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Icono del menú
+                // Botón de menú en la parte izquierda de la barra superior
                 IconButton(onClick = onMenuClick) {
                     Icon(
                         imageVector = Icons.Default.Menu,
@@ -38,12 +42,12 @@ fun PSTopAppBar(onMenuClick: () -> Unit) {
                     )
                 }
 
-                // Agregar un Spacer que compense el ancho del IconButton
-                Spacer(modifier = Modifier.width(PlateScanAppTheme.dimens.spacerMedium)) // Ajusta el valor según sea necesario
+                // Espaciador para equilibrar el diseño y evitar que el logo se alinee a la izquierda
+                Spacer(modifier = Modifier.width(PlateScanAppTheme.dimens.spacerMedium)) // Ajusta según sea necesario
 
-                // Logo centrado respecto a la pantalla
+                // Contenedor del logo centrado horizontalmente
                 Box(
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier.weight(1f), // Permite centrar el logo en la barra
                     contentAlignment = Alignment.Center
                 ) {
                     Image(
@@ -53,15 +57,17 @@ fun PSTopAppBar(onMenuClick: () -> Unit) {
                     )
                 }
 
-                // Spacer vacío para equilibrar el diseño
+                // Espaciador para balancear la distribución de los elementos
                 Spacer(modifier = Modifier.width(PlateScanAppTheme.dimens.spacerLarge)) // Ajusta si es necesario
             }
         },
-        colors = TopAppBarDefaults.topAppBarColors(containerColor = primaryGreen)
+        colors = TopAppBarDefaults.topAppBarColors(containerColor = primaryGreen) // Define el color de fondo de la barra
     )
 }
 
-
+/**
+ * Vista previa del componente PSTopAppBar.
+ */
 @Preview(showBackground = true)
 @Composable
 fun PSTopAppBarPreview() {
