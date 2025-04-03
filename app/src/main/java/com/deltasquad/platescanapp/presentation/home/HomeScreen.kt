@@ -12,6 +12,7 @@ import com.deltasquad.platescanapp.presentation.components.PSTopAppBar
 import com.deltasquad.platescanapp.presentation.components.SearchBar
 import com.deltasquad.platescanapp.presentation.components.BottomNavigationView
 import com.deltasquad.platescanapp.presentation.components.ButtonGroup
+import com.deltasquad.platescanapp.presentation.components.SectionLabel
 import com.deltasquad.platescanapp.presentation.theme.PlateScanAppTheme
 
 @Composable
@@ -46,7 +47,10 @@ fun HomeScreen() {
             // Agregar ButtonGroup justo debajo de la barra de búsqueda
             ButtonGroup()
 
-            // El contenido principal de la pantalla
+            // Sección de "Registros Recientes"
+            SectionLabel(text = "Registros Recientes")
+
+            // Espacio para la lista o contenido debajo del label
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -69,5 +73,3 @@ fun HomeScreenPreview() {
         HomeScreen()
     }
 }
-
-
