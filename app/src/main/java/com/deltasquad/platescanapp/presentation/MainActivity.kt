@@ -9,6 +9,7 @@ import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSiz
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
+import com.deltasquad.platescanapp.presentation.components.ContentCard
 import com.deltasquad.platescanapp.presentation.home.HomeScreen
 import com.deltasquad.platescanapp.presentation.theme.PlateScanAppTheme
 
@@ -27,11 +28,24 @@ class MainActivity : ComponentActivity() {
                 windowSize = windowSize.widthSizeClass
             ) {
                 HomeScreen()
+                //TestScreen()
 
             }
         }
     }
 }
+
+@Composable
+fun TestScreen() {
+    ContentCard(
+        imageUrl = "https://picsum.photos/200/300",
+        plateNumber = "1234 ABC",
+        date = "01/01/2025",
+        description = "Prueba de tarjeta",
+        onClick = {}
+    )
+}
+
 
 @Preview(showBackground = true)
 @Composable

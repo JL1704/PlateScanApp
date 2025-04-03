@@ -8,11 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.layout.WindowInsets
-import com.deltasquad.platescanapp.presentation.components.PSTopAppBar
-import com.deltasquad.platescanapp.presentation.components.SearchBar
-import com.deltasquad.platescanapp.presentation.components.BottomNavigationView
-import com.deltasquad.platescanapp.presentation.components.ButtonGroup
-import com.deltasquad.platescanapp.presentation.components.SectionLabel
+import com.deltasquad.platescanapp.presentation.components.*
 import com.deltasquad.platescanapp.presentation.theme.PlateScanAppTheme
 
 @Composable
@@ -35,30 +31,28 @@ fun HomeScreen() {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
+                .padding(paddingValues),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            // SearchBar debajo del PSTopAppBar
+            // Barra de búsqueda
             SearchBar(
                 query = query,
                 onQueryChanged = { query = it },
-                modifier = Modifier.padding(16.dp) // Ajusta el margen según sea necesario
+                modifier = Modifier.padding(16.dp)
             )
 
-            // Agregar ButtonGroup justo debajo de la barra de búsqueda
+            // Grupo de botones
             ButtonGroup()
 
-            // Sección de "Registros Recientes"
+            // Sección "Registros Recientes"
             SectionLabel(text = "Registros Recientes")
 
-            // Espacio para la lista o contenido debajo del label
-            Box(
+            // Lista de tarjetas (ContentCardGroup)
+            ContentCardGroup(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(text = "Home Screen Content", style = MaterialTheme.typography.bodyLarge)
-            }
+                    .weight(1f) // Ocupa el espacio restante
+                    .padding(horizontal = 16.dp, vertical = 8.dp)
+            )
         }
     }
 }
@@ -73,3 +67,4 @@ fun HomeScreenPreview() {
         HomeScreen()
     }
 }
+
