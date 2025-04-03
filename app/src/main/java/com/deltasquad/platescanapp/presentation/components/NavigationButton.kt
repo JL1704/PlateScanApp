@@ -12,6 +12,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.tooling.preview.Preview
+import com.deltasquad.platescanapp.R
 import com.deltasquad.platescanapp.presentation.theme.PlateScanAppTheme
 import com.deltasquad.platescanapp.presentation.theme.primaryBrown
 import com.deltasquad.platescanapp.presentation.theme.primaryWhite
@@ -53,7 +54,7 @@ fun NavigationButton(
 @Composable
 fun NavigationButtonPreview() {
     NavigationButton(
-        text = "Ver Registros",
-        iconRes = android.R.drawable.ic_menu_recent_history // Reemplazar con un ícono adecuado
+        text = "Registros",
+        iconRes = R.drawable.ic_history // Reemplazar con un ícono adecuado
     )
 }
