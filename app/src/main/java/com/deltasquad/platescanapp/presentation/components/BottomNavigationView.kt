@@ -26,7 +26,7 @@ fun BottomNavigationView(
         containerColor = primaryGreen,
         modifier = Modifier
             .fillMaxWidth()
-            .height(PlateScanAppTheme.dimens.bottomNavViewNormal)
+            .height(PlateScanAppTheme.dimens.bottomNavViewHeight)
             .navigationBarsPadding()
     ) {
         items.forEachIndexed { index, item ->
