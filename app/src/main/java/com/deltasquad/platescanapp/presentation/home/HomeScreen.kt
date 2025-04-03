@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.WindowInsets
 import com.deltasquad.platescanapp.presentation.components.PSTopAppBar
 import com.deltasquad.platescanapp.presentation.components.SearchBar
 import com.deltasquad.platescanapp.presentation.components.BottomNavigationView
+import com.deltasquad.platescanapp.presentation.components.ButtonGroup
 import com.deltasquad.platescanapp.presentation.theme.PlateScanAppTheme
 
 @Composable
@@ -42,6 +43,9 @@ fun HomeScreen() {
                 modifier = Modifier.padding(16.dp) // Ajusta el margen según sea necesario
             )
 
+            // Agregar ButtonGroup justo debajo de la barra de búsqueda
+            ButtonGroup()
+
             // El contenido principal de la pantalla
             Box(
                 modifier = Modifier
@@ -65,4 +69,5 @@ fun HomeScreenPreview() {
         HomeScreen()
     }
 }
+
 

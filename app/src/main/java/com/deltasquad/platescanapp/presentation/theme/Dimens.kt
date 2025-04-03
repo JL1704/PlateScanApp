@@ -7,6 +7,9 @@ data class Dimens(
     val bottomNavViewHeight: Dp = 90.dp,
     val imageHeightNormal: Dp = 40.dp,
     val roundedShapeMedium: Dp = 12.dp,
+    val roundedShapeLarge: Dp = 20.dp,
+    val iconSizeLarge: Dp = 40.dp,
+    val spacerVerySmall: Dp = 4.dp,
 
     val borderNormal: Dp = 4.dp,
     val buttonHeightNormal: Dp = 56.dp,
