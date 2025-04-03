@@ -9,35 +9,32 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import com.deltasquad.platescanapp.presentation.theme.PlateScanAppTheme
 
 @Composable
 fun HomeScreen() {
-    var selectedItem by remember { mutableStateOf(0) } // Estado de la navegación
+    var selectedItem by remember { mutableStateOf(0) }
 
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.SpaceBetween
-    ) {
-        // Contenido principal de la pantalla
+    Scaffold(
+        bottomBar = {
+            BottomNavigationView(
+                selectedItem = selectedItem,
+                onItemSelected = { selectedItem = it }
+            )
+        },
+        contentWindowInsets = WindowInsets(0.dp) // Evita que el contenido empuje la barra de navegación
+    ) { paddingValues ->
         Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f), // Se expande para ocupar todo el espacio disponible
+                .fillMaxSize()
+                .padding(paddingValues),
             contentAlignment = Alignment.Center
         ) {
             Text(text = "Home Screen Content", style = MaterialTheme.typography.bodyLarge)
         }
-
-        // Bottom Navigation View con padding para evitar que se corte
-        BottomNavigationView(
-            selectedItem = selectedItem,
-            onItemSelected = { selectedItem = it },
-            modifier = Modifier
-                .padding(WindowInsets.navigationBars.asPaddingValues()) // Corrige el corte en la parte inferior
-        )
     }
+
+
 }
 
 @Preview(
