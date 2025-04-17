@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.deltasquad.platescanapp.presentation.components.ContentCard
 import com.deltasquad.platescanapp.presentation.home.HomeScreen
+import com.deltasquad.platescanapp.presentation.profile.ProfileScreen
 import com.deltasquad.platescanapp.presentation.theme.PlateScanAppTheme
 
 class MainActivity : ComponentActivity() {
@@ -27,6 +28,7 @@ class MainActivity : ComponentActivity() {
             PlateScanAppTheme(
                 windowSize = windowSize.widthSizeClass
             ) {
+                //ProfileScreen()
                 HomeScreen()
                 //TestScreen()
 
