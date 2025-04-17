@@ -16,6 +16,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.deltasquad.platescanapp.presentation.theme.PlateScanAppTheme
 
 @Composable
 fun ContentCard(
@@ -28,13 +29,13 @@ fun ContentCard(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp)
+            .padding(PlateScanAppTheme.dimens.paddingNormal)
             .clickable { onClick() },
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(PlateScanAppTheme.dimens.roundedShapeMedium),
         elevation = CardDefaults.cardElevation(4.dp)
     ) {
         Row(
-            modifier = Modifier.padding(8.dp),
+            modifier = Modifier.padding(PlateScanAppTheme.dimens.paddingNormal),
             verticalAlignment = Alignment.CenterVertically
         ) {
             AsyncImage(
@@ -42,7 +43,7 @@ fun ContentCard(
                 contentDescription = "Placa del vehículo",
                 modifier = Modifier
                     .size(80.dp)
-                    .padding(end = 8.dp),
+                    .padding(end = PlateScanAppTheme.dimens.paddingNormal),
                 error = painterResource(com.deltasquad.platescanapp.R.drawable.placeholder), // Imagen de respaldo
                 placeholder = painterResource(com.deltasquad.platescanapp.R.drawable.placeholder) // Imagen mientras carga
             )

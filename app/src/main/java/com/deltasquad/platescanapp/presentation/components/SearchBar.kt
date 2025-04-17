@@ -35,7 +35,7 @@ fun SearchBar(
             Icon(imageVector = Icons.Default.Search, contentDescription = "Search Icon")
         },
         placeholder = { Text(text = "Search...", fontSize = 16.sp) },
-        shape = RoundedCornerShape(PlateScanAppTheme.dimens.roundedShapeMedium),
+        shape = RoundedCornerShape(PlateScanAppTheme.dimens.roundedShapeNormal),
         modifier = modifier
             .fillMaxWidth()
             .padding(PlateScanAppTheme.dimens.paddingMedium),

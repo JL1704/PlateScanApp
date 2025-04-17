@@ -6,7 +6,7 @@ import androidx.compose.ui.unit.dp
 data class Dimens(
     val bottomNavViewHeight: Dp = 90.dp,
     val imageHeightNormal: Dp = 40.dp,
-    val roundedShapeMedium: Dp = 12.dp,
+    val roundedShapeMedium: Dp = 16.dp,
     val roundedShapeLarge: Dp = 20.dp,
     val iconSizeLarge: Dp = 40.dp,
     val spacerVerySmall: Dp = 4.dp,
@@ -18,7 +18,7 @@ data class Dimens(
     val paddingSmall: Dp = 4.dp,
     val paddingNormal: Dp = 8.dp,
     val paddingMedium: Dp = 16.dp,
-    val roundedShapeNormal: Dp = 8.dp,
+    val roundedShapeNormal: Dp = 12.dp,
     val spacerSmall: Dp = 8.dp,
     val spacerNormal: Dp = 16.dp,
     val spacerMedium: Dp = 40.dp,
