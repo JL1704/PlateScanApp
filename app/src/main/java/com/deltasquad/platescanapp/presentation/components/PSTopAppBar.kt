@@ -61,7 +61,9 @@ fun PSTopAppBar(onMenuClick: () -> Unit) {
                 Spacer(modifier = Modifier.width(PlateScanAppTheme.dimens.spacerLarge)) // Ajusta si es necesario
             }
         },
-        colors = TopAppBarDefaults.topAppBarColors(containerColor = primaryGreen) // Define el color de fondo de la barra
+        colors = TopAppBarDefaults.topAppBarColors(containerColor = primaryGreen),
+        windowInsets = TopAppBarDefaults.windowInsets
+
     )
 }
 
