@@ -12,6 +12,7 @@ import com.deltasquad.platescanapp.presentation.components.BottomNavigationView
 import com.deltasquad.platescanapp.presentation.home.HomeScreen
 import com.deltasquad.platescanapp.presentation.profile.ProfileScreen
 import androidx.compose.ui.Modifier
+import com.deltasquad.platescanapp.presentation.camera.CameraScreenEntryPoint
 import com.deltasquad.platescanapp.presentation.components.PSTopAppBar
 
 @Composable
@@ -49,8 +50,12 @@ fun NavigationWrapper() {
             modifier = Modifier.padding(padding)
         ) {
             composable(Screen.Camera.route) {
-                CameraScreen()
+                CameraScreenEntryPoint()
             }
+/*
+            composable(Screen.Camera.route) {
+                CameraScreen()
+            }*/
             composable(Screen.Home.route) {
                 HomeScreen()
             }
