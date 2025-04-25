@@ -16,7 +16,7 @@ import com.deltasquad.platescanapp.presentation.camera.CameraScreenEntryPoint
 import com.deltasquad.platescanapp.presentation.components.PSTopAppBar
 
 @Composable
-fun NavigationWrapper() {
+fun NavigationWrapper( modifier: Modifier = Modifier) {
     val navController = rememberNavController()
 
     val screens = listOf(Screen.Home, Screen.Camera, Screen.Profile)
