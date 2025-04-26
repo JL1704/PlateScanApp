@@ -43,7 +43,11 @@ import com.deltasquad.platescanapp.presentation.theme.secondaryGreen
 import com.google.firebase.auth.FirebaseAuth
 
 @Composable
-fun SignUpScreen(auth: FirebaseAuth, navController: NavHostController) {
+fun SignUpScreen(
+    auth: FirebaseAuth,
+    navController: NavHostController,
+    onSignUpSuccess: () -> Unit
+) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
@@ -60,19 +64,15 @@ fun SignUpScreen(auth: FirebaseAuth, navController: NavHostController) {
                 .padding(top = 16.dp, bottom = 32.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Botón Back
             Icon(
                 painter = painterResource(id = R.drawable.ic_back_24),
                 contentDescription = "Back",
                 tint = White,
                 modifier = Modifier
                     .size(28.dp)
-                    .clickable {
-                        navController.popBackStack()
-                    }
+                    .clickable { navController.popBackStack() }
             )
 
-            // Texto centrado
             Text(
                 text = "Create Account",
                 color = White,
@@ -80,12 +80,12 @@ fun SignUpScreen(auth: FirebaseAuth, navController: NavHostController) {
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier
                     .weight(1f)
-                    .padding(end = 28.dp), // Para compensar el tamaño del ícono a la izquierda
+                    .padding(end = 28.dp),
                 textAlign = TextAlign.Center
             )
         }
 
-        // Campo Email
+        // Email
         Text("Email", color = White, fontWeight = FontWeight.Bold, fontSize = 18.sp)
         TextField(
             value = email,
@@ -102,19 +102,17 @@ fun SignUpScreen(auth: FirebaseAuth, navController: NavHostController) {
             },
             singleLine = true,
             textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.Start),
-            shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp),
+            shape = RoundedCornerShape(12.dp),
             colors = TextFieldDefaults.colors(
                 unfocusedContainerColor = UnSelectedField,
                 focusedContainerColor = SelectedField,
-                focusedIndicatorColor = White,
-                unfocusedIndicatorColor = White,
                 focusedTextColor = White,
                 unfocusedTextColor = White,
                 cursorColor = White
             )
         )
 
-        // Campo Password
+        // Password
         Text("Password", color = White, fontWeight = FontWeight.Bold, fontSize = 18.sp)
         TextField(
             value = password,
@@ -131,12 +129,10 @@ fun SignUpScreen(auth: FirebaseAuth, navController: NavHostController) {
             },
             singleLine = true,
             textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.Start),
-            shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp),
+            shape = RoundedCornerShape(12.dp),
             colors = TextFieldDefaults.colors(
                 unfocusedContainerColor = UnSelectedField,
                 focusedContainerColor = SelectedField,
-                focusedIndicatorColor = White,
-                unfocusedIndicatorColor = White,
                 focusedTextColor = White,
                 unfocusedTextColor = White,
                 cursorColor = White
@@ -145,15 +141,12 @@ fun SignUpScreen(auth: FirebaseAuth, navController: NavHostController) {
 
         Spacer(modifier = Modifier.weight(1f))
 
-        // Botón Sign Up
         Button(
             onClick = {
                 auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         Log.i("Luis", "Registrado Ok")
-                        navController.navigate("logIn") {
-                            popUpTo("signUp") { inclusive = true } // ← Limpia el stack
-                        }
+                        onSignUpSuccess()
                     } else {
                         Log.i("Luis", "Registrado KO")
                     }
@@ -171,3 +164,4 @@ fun SignUpScreen(auth: FirebaseAuth, navController: NavHostController) {
         }
     }
 }
+

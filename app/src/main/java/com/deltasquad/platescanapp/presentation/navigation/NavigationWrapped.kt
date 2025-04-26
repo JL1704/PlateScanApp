@@ -16,12 +16,12 @@ import com.deltasquad.platescanapp.presentation.home.HomeScreen
 import com.deltasquad.platescanapp.presentation.profile.ProfileScreen
 import com.google.firebase.auth.FirebaseAuth
 
-
 @Composable
 fun NavigationWrapper(
     modifier: Modifier = Modifier,
     auth: FirebaseAuth,
-    rootNavController: NavHostController
+    rootNavController: NavHostController,
+    onLogout: () -> Unit
 ) {
     val navController = rememberNavController()
 
@@ -31,18 +31,14 @@ fun NavigationWrapper(
     val selectedIndex = screens.indexOfFirst { it.route == currentRoute }.coerceAtLeast(0)
 
     Scaffold(
-        topBar = {
-            PSTopAppBar(onMenuClick = { /* acción del menú */ })
-        },
+        topBar = { PSTopAppBar(onMenuClick = { }) },
         bottomBar = {
             BottomNavigationView(
                 selectedItem = selectedIndex,
                 onItemSelected = { index ->
                     val screen = screens[index]
                     navController.navigate(screen.route) {
-                        popUpTo(navController.graph.startDestinationId) {
-                            saveState = true
-                        }
+                        popUpTo(navController.graph.startDestinationId) { saveState = true }
                         launchSingleTop = true
                         restoreState = true
                     }
@@ -55,19 +51,14 @@ fun NavigationWrapper(
             startDestination = Screen.Camera.route,
             modifier = Modifier.padding(padding)
         ) {
-            composable(Screen.Camera.route) {
-                CameraScreenEntryPoint()
-            }
-
-            composable(Screen.Home.route) {
-                HomeScreen()
-            }
-
+            composable(Screen.Camera.route) { CameraScreenEntryPoint() }
+            composable(Screen.Home.route) { HomeScreen() }
             composable(Screen.Profile.route) {
-                ProfileScreen(auth = auth, navController = navController, rootNavController = rootNavController)
+                ProfileScreen(auth = auth, onLogout = onLogout)
             }
         }
     }
 }
+
 
 

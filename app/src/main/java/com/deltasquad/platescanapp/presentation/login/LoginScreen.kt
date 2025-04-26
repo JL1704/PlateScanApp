@@ -26,7 +26,11 @@ import com.deltasquad.platescanapp.presentation.theme.secondaryGreen
 import com.google.firebase.auth.FirebaseAuth
 
 @Composable
-fun LoginScreen(auth: FirebaseAuth, navController: NavHostController) {
+fun LoginScreen(
+    auth: FirebaseAuth,
+    navController: NavHostController,
+    onLoginSuccess: () -> Unit
+) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
@@ -87,8 +91,6 @@ fun LoginScreen(auth: FirebaseAuth, navController: NavHostController) {
             colors = TextFieldDefaults.colors(
                 unfocusedContainerColor = UnSelectedField,
                 focusedContainerColor = SelectedField,
-                focusedIndicatorColor = White,
-                unfocusedIndicatorColor = White,
                 focusedTextColor = White,
                 unfocusedTextColor = White,
                 cursorColor = White
@@ -116,8 +118,6 @@ fun LoginScreen(auth: FirebaseAuth, navController: NavHostController) {
             colors = TextFieldDefaults.colors(
                 unfocusedContainerColor = UnSelectedField,
                 focusedContainerColor = SelectedField,
-                focusedIndicatorColor = White,
-                unfocusedIndicatorColor = White,
                 focusedTextColor = White,
                 unfocusedTextColor = White,
                 cursorColor = White
@@ -132,9 +132,7 @@ fun LoginScreen(auth: FirebaseAuth, navController: NavHostController) {
                 auth.signInWithEmailAndPassword(email, password).addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         Log.i("Luis", "Login Ok")
-                        navController.navigate("main") {
-                            popUpTo("logIn") { inclusive = true } // Limpia el stack del login
-                        }
+                        onLoginSuccess()
                     } else {
                         Log.i("Luis", "Login KO")
                     }
@@ -152,3 +150,4 @@ fun LoginScreen(auth: FirebaseAuth, navController: NavHostController) {
         }
     }
 }
+
