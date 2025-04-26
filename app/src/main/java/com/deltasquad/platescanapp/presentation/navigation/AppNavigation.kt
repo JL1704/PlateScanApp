@@ -1,6 +1,10 @@
 package com.deltasquad.platescanapp.presentation.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
 import com.google.firebase.auth.FirebaseAuth
@@ -8,14 +12,13 @@ import com.google.firebase.auth.FirebaseAuth
 @Composable
 fun AppNavigation(auth: FirebaseAuth, modifier: Modifier) {
     val navController = rememberNavController()
-    val user = auth.currentUser
+    var currentUser by remember { mutableStateOf(auth.currentUser) }
 
-    if (user == null) {
-        // Usuario no autenticado → flujo de login
+
+    if (currentUser == null) {
         AuthNavigation(navController, auth)
     } else {
-        // Usuario autenticado → flujo principal
-        AuthNavigation(navController, auth)
-        //NavigationWrapper(modifier)
+        NavigationWrapper(modifier = modifier, auth = auth, rootNavController = navController)
     }
 }
+

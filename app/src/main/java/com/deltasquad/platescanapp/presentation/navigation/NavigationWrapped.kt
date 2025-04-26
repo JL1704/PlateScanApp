@@ -3,20 +3,26 @@ package com.deltasquad.platescanapp.presentation.navigation
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.deltasquad.platescanapp.presentation.camera.CameraScreen
+import com.deltasquad.platescanapp.presentation.camera.CameraScreenEntryPoint
 import com.deltasquad.platescanapp.presentation.components.BottomNavigationView
+import com.deltasquad.platescanapp.presentation.components.PSTopAppBar
 import com.deltasquad.platescanapp.presentation.home.HomeScreen
 import com.deltasquad.platescanapp.presentation.profile.ProfileScreen
-import androidx.compose.ui.Modifier
-import com.deltasquad.platescanapp.presentation.camera.CameraScreenEntryPoint
-import com.deltasquad.platescanapp.presentation.components.PSTopAppBar
+import com.google.firebase.auth.FirebaseAuth
+
 
 @Composable
-fun NavigationWrapper( modifier: Modifier = Modifier) {
+fun NavigationWrapper(
+    modifier: Modifier = Modifier,
+    auth: FirebaseAuth,
+    rootNavController: NavHostController
+) {
     val navController = rememberNavController()
 
     val screens = listOf(Screen.Home, Screen.Camera, Screen.Profile)
@@ -52,15 +58,13 @@ fun NavigationWrapper( modifier: Modifier = Modifier) {
             composable(Screen.Camera.route) {
                 CameraScreenEntryPoint()
             }
-/*
-            composable(Screen.Camera.route) {
-                CameraScreen()
-            }*/
+
             composable(Screen.Home.route) {
                 HomeScreen()
             }
+
             composable(Screen.Profile.route) {
-                ProfileScreen()
+                ProfileScreen(auth = auth, navController = navController, rootNavController = rootNavController)
             }
         }
     }

@@ -1,8 +1,6 @@
 package com.deltasquad.platescanapp.presentation.navigation
 
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -27,7 +25,7 @@ fun AuthNavigation(navController: NavHostController, auth: FirebaseAuth) {
             SignUpScreen(auth = auth, navController = navController)
         }
         composable("main") {
-            NavigationWrapper()
+            NavigationWrapper(auth = auth, rootNavController = navController)
         }
     }
 }
