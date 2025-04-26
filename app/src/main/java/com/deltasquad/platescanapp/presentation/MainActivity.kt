@@ -1,6 +1,5 @@
 package com.deltasquad.platescanapp.presentation
 
-import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -8,73 +7,70 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.deltasquad.platescanapp.presentation.components.ContentCard
-import com.deltasquad.platescanapp.presentation.home.HomeScreen
-import com.deltasquad.platescanapp.presentation.navigation.NavigationWrapper
-import com.deltasquad.platescanapp.presentation.profile.ProfileScreen
-import com.deltasquad.platescanapp.presentation.theme.PlateScanAppTheme
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBars
+import androidx.core.view.WindowCompat
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.deltasquad.platescanapp.presentation.components.ContentCard
+import com.deltasquad.platescanapp.presentation.home.HomeScreen
 import com.deltasquad.platescanapp.presentation.navigation.AppNavigation
-import com.google.firebase.Firebase
+import com.deltasquad.platescanapp.presentation.theme.PlateScanAppTheme
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.auth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
 class MainActivity : ComponentActivity() {
 
-    //Esto cambiara
     private lateinit var navHostController: NavHostController
     private lateinit var auth: FirebaseAuth
 
     @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         enableEdgeToEdge()
-        //Mejorar implementacion
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+
         auth = Firebase.auth
 
-        /*
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            window.setDecorFitsSystemWindows(false) // Solo se ejecuta en Android 11+
-        } //  Evita solapamiento con la barra del sistema
-        */
         setContent {
             navHostController = rememberNavController()
             val windowSize = calculateWindowSizeClass(activity = this)
-            PlateScanAppTheme(
-                windowSize = windowSize.widthSizeClass
-            ) {
+
+            PlateScanAppTheme(windowSize = windowSize.widthSizeClass) {
+                val systemUiController = rememberSystemUiController()
+
+                SideEffect {
+                    systemUiController.setSystemBarsColor(
+                        color = Color.Black,
+                        darkIcons = true
+                    )
+                }
+
                 Scaffold(
+                    containerColor = MaterialTheme.colorScheme.background,
                     modifier = Modifier
                         .fillMaxSize()
                         .windowInsetsPadding(WindowInsets.statusBars)
                 ) { paddingValues ->
-
-                    AppNavigation(auth, modifier = Modifier.padding(paddingValues) )
-                    //NavigationWrapper( modifier = Modifier.padding(paddingValues) )
-
-                    //ProfileScreen()
-                    //HomeScreen()
-                    //TestScreen()
-                    /*TestCrashlytics(
-                        name = "Usuario",
-                        modifier = Modifier.padding(paddingValues)
-                    )*/
+                    AppNavigation(auth, modifier = Modifier.padding(paddingValues))
                 }
-
             }
         }
     }

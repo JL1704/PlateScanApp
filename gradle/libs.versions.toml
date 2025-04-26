@@ -23,6 +23,7 @@ accompanist = "0.30.1"
 firebaseBom = "33.13.0"
 services = "4.4.2"
 crashlytics = "3.0.3"
+systemUiController = "0.32.0"
 
 
 [libraries]
@@ -55,6 +56,7 @@ accompanist-permissions = { module = "com.google.accompanist:accompanist-permiss
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics" }
 firebase-auth = { module = "com.google.firebase:firebase-auth-ktx" }
+accompanist-systemuicontroller = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "systemUiController" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
