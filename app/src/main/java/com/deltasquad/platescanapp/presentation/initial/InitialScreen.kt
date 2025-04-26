@@ -4,14 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -29,15 +22,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.deltasquad.platescanapp.R
-import com.deltasquad.platescanapp.presentation.theme.PlateScanAppTheme
-import com.deltasquad.platescanapp.presentation.theme.primaryGreen
-import com.deltasquad.platescanapp.presentation.theme.primaryWhite
-import com.deltasquad.platescanapp.presentation.theme.secondaryBlack
-import com.deltasquad.platescanapp.presentation.theme.secondaryGray
-import com.deltasquad.platescanapp.presentation.theme.secondaryGreen
+import com.deltasquad.platescanapp.presentation.theme.*
 
 @Composable
-fun InitialScreen(navigateToLogin: () -> Unit = {}, navigateToSignUp: () -> Unit = {}) {
+fun InitialScreen(
+    navigateToLogin: () -> Unit = {},
+    navigateToSignUp: () -> Unit = {},
+    onGoogleSignInClick: () -> Unit // Asegúrate de que este parámetro esté conectado
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -76,24 +68,37 @@ fun InitialScreen(navigateToLogin: () -> Unit = {}, navigateToSignUp: () -> Unit
             Text(text = "Sign up free", color = primaryWhite, fontWeight = FontWeight.Bold)
         }
         Spacer(modifier = Modifier.height(8.dp))
-        CustomButton(Modifier.clickable {  }, painterResource(id = R.drawable.google), "Continue with Google")
+
+        // Aquí llamamos a onGoogleSignInClick
+        CustomButton(
+            modifier = Modifier.clickable { onGoogleSignInClick() },
+            painter = painterResource(id = R.drawable.google),
+            title = "Continue with Google"
+        )
+
         Spacer(modifier = Modifier.height(8.dp))
-        CustomButton(Modifier.clickable {  }, painterResource(id = R.drawable.facebook), "Continue with Facebook")
+        CustomButton(
+            modifier = Modifier.clickable { /* pendiente facebook */ },
+            painter = painterResource(id = R.drawable.facebook),
+            title = "Continue with Facebook"
+        )
         Text(
             text = "Log in",
             color = primaryWhite,
-            modifier = Modifier.padding(24.dp).clickable { navigateToLogin() },
+            modifier = Modifier
+                .padding(24.dp)
+                .clickable { navigateToLogin() },
             fontWeight = FontWeight.Bold
         )
         Spacer(modifier = Modifier.weight(1f))
-
     }
 }
+
 
 @Composable
 fun CustomButton(modifier: Modifier, painter: Painter, title: String){
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .height(48.dp)
             .padding(horizontal = 32.dp)
@@ -104,7 +109,9 @@ fun CustomButton(modifier: Modifier, painter: Painter, title: String){
         Image(
             painter = painter,
             contentDescription = "",
-            modifier = Modifier.padding(start = 16.dp).size(16.dp)
+            modifier = Modifier
+                .padding(start = 16.dp)
+                .size(16.dp)
         )
         Text(
             text = title,
@@ -114,14 +121,13 @@ fun CustomButton(modifier: Modifier, painter: Painter, title: String){
             fontWeight = FontWeight.Bold
         )
     }
-
 }
 
 @Preview(showBackground = true)
 @Composable
-fun InitialPreview(){
+fun InitialPreview() {
     PlateScanAppTheme {
-        InitialScreen()
+        //InitialScreen()
     }
 }
 

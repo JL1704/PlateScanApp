@@ -4,6 +4,9 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.IntentSenderRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -26,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.deltasquad.platescanapp.data.auth.GoogleAuthUiClient
 import com.deltasquad.platescanapp.presentation.components.ContentCard
 import com.deltasquad.platescanapp.presentation.home.HomeScreen
 import com.deltasquad.platescanapp.presentation.navigation.AppNavigation
@@ -39,6 +43,10 @@ class MainActivity : ComponentActivity() {
 
     private lateinit var navHostController: NavHostController
     private lateinit var auth: FirebaseAuth
+    private lateinit var googleAuthUiClient: GoogleAuthUiClient
+    //private lateinit var googleSignInLauncher: ActivityResultLauncher<IntentSender>
+    private lateinit var googleSignInLauncher: ActivityResultLauncher<IntentSenderRequest>
+
 
     @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,6 +56,24 @@ class MainActivity : ComponentActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
         auth = Firebase.auth
+        googleAuthUiClient = GoogleAuthUiClient(this)
+
+        // Configura el launcher para manejar el resultado del inicio de sesión de Google
+        googleSignInLauncher = registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result ->
+            if (result.resultCode == RESULT_OK) {
+                googleAuthUiClient.handleSignInResult(result.data) { success ->
+                    if (success) {
+                        // Aquí puedes manejar el éxito de la autenticación, redirigir a la pantalla principal, etc.
+                        navHostController.navigate("home") // Ajusta esto a tu flujo de navegación
+                    } else {
+                        // Aquí puedes manejar el error de autenticación
+                        // Mostrar un mensaje de error o intentar el proceso nuevamente
+                    }
+                }
+            } else {
+                // Maneja el caso cuando el usuario no completa el inicio de sesión
+            }
+        }
 
         setContent {
             navHostController = rememberNavController()
@@ -69,7 +95,7 @@ class MainActivity : ComponentActivity() {
                         .fillMaxSize()
                         .windowInsetsPadding(WindowInsets.statusBars)
                 ) { paddingValues ->
-                    AppNavigation(auth, modifier = Modifier.padding(paddingValues))
+                    AppNavigation(auth, modifier = Modifier.padding(paddingValues), googleSignInLauncher = googleSignInLauncher)
                 }
             }
         }

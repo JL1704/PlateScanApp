@@ -24,6 +24,7 @@ firebaseBom = "33.13.0"
 services = "4.4.2"
 crashlytics = "3.0.3"
 systemUiController = "0.32.0"
+play-services-auth = "21.1.0"
 
 
 [libraries]
@@ -57,6 +58,7 @@ firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "fir
 firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics" }
 firebase-auth = { module = "com.google.firebase:firebase-auth-ktx" }
 accompanist-systemuicontroller = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "systemUiController" }
+play-services-auth = { group = "com.google.android.gms", name = "play-services-auth", version.ref = "play-services-auth" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -65,5 +67,6 @@ kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "ko
 jetbrainsKotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 googleServices = { id = "com.google.gms.google-services", version.ref = "services"}
 crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "crashlytics"}
+
 
 

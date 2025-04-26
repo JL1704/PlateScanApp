@@ -1,5 +1,7 @@
 package com.deltasquad.platescanapp.presentation.navigation
 
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.IntentSenderRequest
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -11,7 +13,7 @@ import androidx.navigation.compose.rememberNavController
 import com.google.firebase.auth.FirebaseAuth
 
 @Composable
-fun AppNavigation(auth: FirebaseAuth, modifier: Modifier) {
+fun AppNavigation(auth: FirebaseAuth, modifier: Modifier, googleSignInLauncher: ActivityResultLauncher<IntentSenderRequest>) {
     val navController = rememberNavController()
     var isAuthenticated by remember { mutableStateOf(auth.currentUser != null) }
 
