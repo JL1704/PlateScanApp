@@ -26,18 +26,33 @@ import com.deltasquad.platescanapp.presentation.theme.PlateScanAppTheme
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
+import com.deltasquad.platescanapp.presentation.navigation.AppNavigation
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.auth
 
 class MainActivity : ComponentActivity() {
+
+    //Esto cambiara
+    private lateinit var navHostController: NavHostController
+    private lateinit var auth: FirebaseAuth
+
     @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        //Mejorar implementacion
+        auth = Firebase.auth
+
         /*
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             window.setDecorFitsSystemWindows(false) // Solo se ejecuta en Android 11+
         } //  Evita solapamiento con la barra del sistema
         */
         setContent {
+            navHostController = rememberNavController()
             val windowSize = calculateWindowSizeClass(activity = this)
             PlateScanAppTheme(
                 windowSize = windowSize.widthSizeClass
@@ -47,7 +62,10 @@ class MainActivity : ComponentActivity() {
                         .fillMaxSize()
                         .windowInsetsPadding(WindowInsets.statusBars)
                 ) { paddingValues ->
-                    NavigationWrapper( modifier = Modifier.padding(paddingValues) )
+
+                    AppNavigation(auth, modifier = Modifier.padding(paddingValues) )
+                    //NavigationWrapper( modifier = Modifier.padding(paddingValues) )
+
                     //ProfileScreen()
                     //HomeScreen()
                     //TestScreen()
