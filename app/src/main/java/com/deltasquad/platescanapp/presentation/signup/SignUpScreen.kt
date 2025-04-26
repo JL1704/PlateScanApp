@@ -2,6 +2,8 @@ package com.deltasquad.platescanapp.presentation.signup
 
 import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -10,8 +12,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -26,68 +31,143 @@ import androidx.compose.ui.graphics.Color.Companion.Black
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.deltasquad.platescanapp.R
 import com.deltasquad.platescanapp.presentation.theme.SelectedField
 import com.deltasquad.platescanapp.presentation.theme.UnSelectedField
+import com.deltasquad.platescanapp.presentation.theme.primaryGreen
+import com.deltasquad.platescanapp.presentation.theme.secondaryGreen
 import com.google.firebase.auth.FirebaseAuth
 
 @Composable
-fun SignUpScreen(auth: FirebaseAuth) {
-
-    var email: String by remember { mutableStateOf("") }
-    var password: String by remember { mutableStateOf("") }
+fun SignUpScreen(auth: FirebaseAuth, navController: NavHostController) {
+    var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Black)
-            .padding(horizontal = 32.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+            .padding(horizontal = 24.dp),
+        horizontalAlignment = Alignment.Start
     ) {
-        Row {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 16.dp, bottom = 32.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // Botón Back
             Icon(
                 painter = painterResource(id = R.drawable.ic_back_24),
-                contentDescription = "",
+                contentDescription = "Back",
                 tint = White,
-                modifier = Modifier.padding(vertical = 24.dp).size(24.dp)
+                modifier = Modifier
+                    .size(28.dp)
+                    .clickable {
+                        navController.popBackStack()
+                    }
             )
-            Spacer(modifier = Modifier.weight(1f))
+
+            // Texto centrado
+            Text(
+                text = "Create Account",
+                color = White,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(end = 28.dp), // Para compensar el tamaño del ícono a la izquierda
+                textAlign = TextAlign.Center
+            )
         }
 
-        Text("Email", color = White, fontWeight = FontWeight.Bold, fontSize = 40.sp)
+        // Campo Email
+        Text("Email", color = White, fontWeight = FontWeight.Bold, fontSize = 18.sp)
         TextField(
             value = email,
             onValueChange = { email = it },
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp),
+            leadingIcon = {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_mail),
+                    contentDescription = "Email Icon",
+                    tint = White
+                )
+            },
+            singleLine = true,
+            textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.Start),
+            shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp),
             colors = TextFieldDefaults.colors(
                 unfocusedContainerColor = UnSelectedField,
-                focusedContainerColor = SelectedField
+                focusedContainerColor = SelectedField,
+                focusedIndicatorColor = White,
+                unfocusedIndicatorColor = White,
+                focusedTextColor = White,
+                unfocusedTextColor = White,
+                cursorColor = White
             )
         )
-        Spacer(Modifier.height(48.dp))
-        Text("Password", color = White, fontWeight = FontWeight.Bold, fontSize = 40.sp)
+
+        // Campo Password
+        Text("Password", color = White, fontWeight = FontWeight.Bold, fontSize = 18.sp)
         TextField(
             value = password,
             onValueChange = { password = it },
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp),
+            leadingIcon = {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_lock),
+                    contentDescription = "Password Icon",
+                    tint = White
+                )
+            },
+            singleLine = true,
+            textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.Start),
+            shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp),
             colors = TextFieldDefaults.colors(
                 unfocusedContainerColor = UnSelectedField,
-                focusedContainerColor = SelectedField
+                focusedContainerColor = SelectedField,
+                focusedIndicatorColor = White,
+                unfocusedIndicatorColor = White,
+                focusedTextColor = White,
+                unfocusedTextColor = White,
+                cursorColor = White
             )
         )
-        Spacer(Modifier.height(48.dp))
-        Button(onClick = {
-            auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener { task ->
-                if(task.isSuccessful){
-                    Log.i("Luis", "Registrado Ok")
-                }else{
-                    Log.i("Luis", "Registrado KO")
+
+        Spacer(modifier = Modifier.weight(1f))
+
+        // Botón Sign Up
+        Button(
+            onClick = {
+                auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        Log.i("Luis", "Registrado Ok")
+                        navController.navigate("logIn") {
+                            popUpTo("signUp") { inclusive = true } // ← Limpia el stack
+                        }
+                    } else {
+                        Log.i("Luis", "Registrado KO")
+                    }
                 }
-            }
-        }) {
-            Text("Sign Up")
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 60.dp)
+                .height(56.dp)
+                .border(2.dp, secondaryGreen, RoundedCornerShape(16.dp)),
+            shape = RoundedCornerShape(16.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = primaryGreen)
+        ) {
+            Text("Sign Up", fontSize = 18.sp)
         }
     }
 }
