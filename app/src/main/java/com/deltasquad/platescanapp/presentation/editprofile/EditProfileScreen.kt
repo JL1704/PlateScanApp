@@ -1,19 +1,26 @@
-package com.deltasquad.platescanapp.presentation.profile
+package com.deltasquad.platescanapp.presentation.editprofile
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.deltasquad.platescanapp.presentation.components.CircleImageView
 import com.deltasquad.platescanapp.presentation.components.UserInfo
+import com.deltasquad.platescanapp.presentation.theme.PlateScanAppTheme
 import com.google.firebase.auth.FirebaseAuth
 
 @Composable
-fun ProfileScreen(auth: FirebaseAuth, onLogout: () -> Unit, onEditProfile: () -> Unit) {
+fun EditProfileScreen(){
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -43,7 +50,7 @@ fun ProfileScreen(auth: FirebaseAuth, onLogout: () -> Unit, onEditProfile: () ->
         ) {
             Button(
                 onClick = {
-                    onEditProfile()
+                    // editar
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -52,22 +59,14 @@ fun ProfileScreen(auth: FirebaseAuth, onLogout: () -> Unit, onEditProfile: () ->
                 Text("Edit")
             }
 
-            Button(
-                onClick = {
-                    auth.signOut()
-                    onLogout() // <-- esto fuerza recomposición en AppNavigation
-                },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("Log Out")
-            }
         }
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-fun ProfileScreenPreview() {
-    //ProfileScreen()
+fun EditProfilePreview(){
+    PlateScanAppTheme {
+        EditProfileScreen()
+    }
 }
-

@@ -12,6 +12,7 @@ import androidx.navigation.compose.rememberNavController
 import com.deltasquad.platescanapp.presentation.camera.CameraScreenEntryPoint
 import com.deltasquad.platescanapp.presentation.components.BottomNavigationView
 import com.deltasquad.platescanapp.presentation.components.PSTopAppBar
+import com.deltasquad.platescanapp.presentation.editprofile.EditProfileScreen
 import com.deltasquad.platescanapp.presentation.home.HomeScreen
 import com.deltasquad.platescanapp.presentation.profile.ProfileScreen
 import com.google.firebase.auth.FirebaseAuth
@@ -28,10 +29,25 @@ fun NavigationWrapper(
     val screens = listOf(Screen.Home, Screen.Camera, Screen.Profile)
     val currentBackStackEntry = navController.currentBackStackEntryAsState()
     val currentRoute = currentBackStackEntry.value?.destination?.route
-    val selectedIndex = screens.indexOfFirst { it.route == currentRoute }.coerceAtLeast(0)
+    val selectedIndex = screens.indexOfFirst { it.route == currentRoute }//.coerceAtLeast(0)
 
     Scaffold(
         topBar = { PSTopAppBar(onMenuClick = { }) },
+        bottomBar = {
+            if (selectedIndex >= 0) {
+                BottomNavigationView(
+                    selectedItem = selectedIndex,
+                    onItemSelected = { index ->
+                        val screen = screens[index]
+                        navController.navigate(screen.route) {
+                            popUpTo(navController.graph.startDestinationId) { saveState = true }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    }
+                )
+            }
+        }/*,
         bottomBar = {
             BottomNavigationView(
                 selectedItem = selectedIndex,
@@ -44,7 +60,7 @@ fun NavigationWrapper(
                     }
                 }
             )
-        }
+        }*/
     ) { padding ->
         NavHost(
             navController = navController,
@@ -54,8 +70,15 @@ fun NavigationWrapper(
             composable(Screen.Camera.route) { CameraScreenEntryPoint() }
             composable(Screen.Home.route) { HomeScreen() }
             composable(Screen.Profile.route) {
-                ProfileScreen(auth = auth, onLogout = onLogout)
+                ProfileScreen(
+                    auth = auth,
+                    onLogout = onLogout,
+                    onEditProfile = {
+                        navController.navigate(Screen.EditProfile.route)
+                    }
+                    )
             }
+            composable(Screen.EditProfile.route){ EditProfileScreen() }
         }
     }
 }
