@@ -129,6 +129,6 @@ fun TestCrashlytics(name: String, modifier: Modifier = Modifier) {
 @Composable
 fun AppPreview() {
     PlateScanAppTheme {
-        HomeScreen()
+        //HomeScreen()
     }
 }

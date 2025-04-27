@@ -1,6 +1,7 @@
 package com.deltasquad.platescanapp.presentation.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -21,12 +22,15 @@ import com.deltasquad.platescanapp.presentation.theme.primaryWhite
 fun NavigationButton(
     text: String,
     iconRes: Int,
-    backgroundColor: Color = primaryBrown, // Color marrón como en la imagen
-    contentColor: Color = primaryWhite
+    backgroundColor: Color = primaryBrown,
+    contentColor: Color = primaryWhite,
+    onClick: () -> Unit // <-- AÑADIR ESTO
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.padding(PlateScanAppTheme.dimens.paddingNormal)
+        modifier = Modifier
+            .padding(PlateScanAppTheme.dimens.paddingNormal)
+            .clickable { onClick() } // <-- Maneja el clic aquí
     ) {
         Box(
             modifier = Modifier
@@ -50,11 +54,9 @@ fun NavigationButton(
     }
 }
 
+
 @Preview(showBackground = true)
 @Composable
 fun NavigationButtonPreview() {
-    NavigationButton(
-        text = "Registros",
-        iconRes = R.drawable.ic_history // Reemplazar con un ícono adecuado
-    )
+
 }

@@ -15,6 +15,9 @@ import com.deltasquad.platescanapp.presentation.components.PSTopAppBar
 import com.deltasquad.platescanapp.presentation.editprofile.EditProfileScreen
 import com.deltasquad.platescanapp.presentation.home.HomeScreen
 import com.deltasquad.platescanapp.presentation.profile.ProfileScreen
+import com.deltasquad.platescanapp.presentation.records.RecordsScreen
+import com.deltasquad.platescanapp.presentation.reports.ReportsScreen
+import com.deltasquad.platescanapp.presentation.stats.StatsScreen
 import com.google.firebase.auth.FirebaseAuth
 
 @Composable
@@ -47,20 +50,7 @@ fun NavigationWrapper(
                     }
                 )
             }
-        }/*,
-        bottomBar = {
-            BottomNavigationView(
-                selectedItem = selectedIndex,
-                onItemSelected = { index ->
-                    val screen = screens[index]
-                    navController.navigate(screen.route) {
-                        popUpTo(navController.graph.startDestinationId) { saveState = true }
-                        launchSingleTop = true
-                        restoreState = true
-                    }
-                }
-            )
-        }*/
+        }
     ) { padding ->
         NavHost(
             navController = navController,
@@ -68,7 +58,7 @@ fun NavigationWrapper(
             modifier = Modifier.padding(padding)
         ) {
             composable(Screen.Camera.route) { CameraScreenEntryPoint() }
-            composable(Screen.Home.route) { HomeScreen() }
+            composable(Screen.Home.route) { HomeScreen(navController) }
             composable(Screen.Profile.route) {
                 ProfileScreen(
                     auth = auth,
@@ -79,6 +69,10 @@ fun NavigationWrapper(
                     )
             }
             composable(Screen.EditProfile.route){ EditProfileScreen() }
+            composable(Screen.Records.route) { RecordsScreen() }
+            composable(Screen.Reports.route) { ReportsScreen() }
+            composable(Screen.Stats.route) { StatsScreen() }
+
         }
     }
 }
