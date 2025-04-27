@@ -1,6 +1,5 @@
 package com.deltasquad.platescanapp.presentation.camera
 
-import android.Manifest
 import android.content.Context
 import android.net.Uri
 import android.util.Log
@@ -20,7 +19,11 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import java.io.File
-import java.util.concurrent.Executor
+import android.content.ContentValues
+import android.os.Build
+import android.provider.MediaStore
+import java.io.FileInputStream
+import java.io.OutputStream
 
 
 @Composable
@@ -35,9 +38,7 @@ fun CameraScreen(viewModel: CameraViewModel = viewModel()) {
     // AndroidView para mostrar la cámara
     AndroidView(
         factory = { previewView },
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(bottom = 100.dp) // espacio para el botón
+        modifier = Modifier.fillMaxSize()
     )
 
     LaunchedEffect(true) {
@@ -87,21 +88,49 @@ fun CameraScreen(viewModel: CameraViewModel = viewModel()) {
 fun takePhoto(context: Context, viewModel: CameraViewModel, onPhotoCaptured: (Uri) -> Unit) {
     val imageCapture = viewModel.imageCapture ?: return
 
-    val photoFile = File(
-        context.cacheDir,
-        "IMG_${System.currentTimeMillis()}.jpg"
-    )
-
-    val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile).build()
+    // Guardar temporalmente
+    val tempFile = File(context.cacheDir, "IMG_${System.currentTimeMillis()}.jpg")
+    val outputOptions = ImageCapture.OutputFileOptions.Builder(tempFile).build()
 
     imageCapture.takePicture(
         outputOptions,
         ContextCompat.getMainExecutor(context),
         object : ImageCapture.OnImageSavedCallback {
             override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
-                val uri = Uri.fromFile(photoFile)
-                viewModel.onPhotoCaptured(uri)
-                onPhotoCaptured(uri)
+                // Ahora mover al MediaStore
+                val contentValues = ContentValues().apply {
+                    put(MediaStore.MediaColumns.DISPLAY_NAME, tempFile.name)
+                    put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                        put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/PlateScanApp")
+                    }
+                }
+
+                val resolver = context.contentResolver
+                val uri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+
+                if (uri != null) {
+                    try {
+                        val outputStream: OutputStream? = resolver.openOutputStream(uri)
+                        val inputStream = FileInputStream(tempFile)
+
+                        inputStream.copyTo(outputStream!!)
+                        inputStream.close()
+                        outputStream.close()
+
+                        viewModel.onPhotoCaptured(uri)
+                        onPhotoCaptured(uri)
+
+                        Toast.makeText(context, "Foto guardada en la galería 🎉", Toast.LENGTH_SHORT).show()
+                    } catch (e: Exception) {
+                        Log.e("CameraCapture", "Error al copiar imagen a la galería", e)
+                        Toast.makeText(context, "Error al guardar la foto", Toast.LENGTH_SHORT).show()
+                    } finally {
+                        tempFile.delete() // Borrar temporal
+                    }
+                } else {
+                    Toast.makeText(context, "No se pudo crear el archivo en galería", Toast.LENGTH_SHORT).show()
+                }
             }
 
             override fun onError(exception: ImageCaptureException) {
@@ -118,16 +147,3 @@ fun CameraScreenEntryPoint() {
         CameraScreen()
     }
 }
-
-
-/*
-@Preview(
-    name = "CameraScreenPreview",
-    showBackground = true
-)
-@Composable
-fun CameraScreenPreview() {
-    PlateScanAppTheme {
-        CameraScreen()
-    }
-}*/
