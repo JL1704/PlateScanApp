@@ -25,6 +25,7 @@ services = "4.4.2"
 crashlytics = "3.0.3"
 systemUiController = "0.32.0"
 play-services-auth = "21.1.0"
+coreSplashscreen = "1.0.1"
 
 
 [libraries]
@@ -59,6 +60,7 @@ firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics" }
 firebase-auth = { module = "com.google.firebase:firebase-auth-ktx" }
 accompanist-systemuicontroller = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "systemUiController" }
 play-services-auth = { group = "com.google.android.gms", name = "play-services-auth", version.ref = "play-services-auth" }
+androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "coreSplashscreen" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
