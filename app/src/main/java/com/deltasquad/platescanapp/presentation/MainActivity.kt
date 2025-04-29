@@ -8,13 +8,14 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -44,7 +45,6 @@ class MainActivity : ComponentActivity() {
     private lateinit var navHostController: NavHostController
     private lateinit var auth: FirebaseAuth
     private lateinit var googleAuthUiClient: GoogleAuthUiClient
-    //private lateinit var googleSignInLauncher: ActivityResultLauncher<IntentSender>
     private lateinit var googleSignInLauncher: ActivityResultLauncher<IntentSenderRequest>
 
 
@@ -81,14 +81,30 @@ class MainActivity : ComponentActivity() {
 
             PlateScanAppTheme(windowSize = windowSize.widthSizeClass) {
                 val systemUiController = rememberSystemUiController()
+                val useDarkIcons = !isSystemInDarkTheme()
 
                 SideEffect {
                     systemUiController.setSystemBarsColor(
                         color = Color.Black,
-                        darkIcons = true
+                        darkIcons = useDarkIcons
                     )
                 }
 
+                Scaffold(
+                    modifier = Modifier
+                        .fillMaxSize()
+                ) { paddingValues ->
+                    AppNavigation(auth, modifier = Modifier.padding(paddingValues), googleSignInLauncher = googleSignInLauncher)
+                }
+
+
+
+            }
+        }
+    }
+}
+
+/*
                 Scaffold(
                     containerColor = MaterialTheme.colorScheme.background,
                     modifier = Modifier
@@ -96,11 +112,7 @@ class MainActivity : ComponentActivity() {
                         .windowInsetsPadding(WindowInsets.statusBars)
                 ) { paddingValues ->
                     AppNavigation(auth, modifier = Modifier.padding(paddingValues), googleSignInLauncher = googleSignInLauncher)
-                }
-            }
-        }
-    }
-}
+                }*/
 
 @Composable
 fun TestScreen() {

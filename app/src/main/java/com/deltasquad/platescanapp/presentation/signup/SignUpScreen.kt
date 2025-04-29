@@ -55,7 +55,8 @@ fun SignUpScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(Black)
-            .padding(horizontal = 24.dp),
+            .padding(horizontal = 24.dp)
+            .padding(top = 32.dp),
         horizontalAlignment = Alignment.Start
     ) {
         Row(
