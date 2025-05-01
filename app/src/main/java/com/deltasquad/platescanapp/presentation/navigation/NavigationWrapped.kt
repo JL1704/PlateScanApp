@@ -15,6 +15,7 @@ import com.deltasquad.platescanapp.presentation.components.PSTopAppBar
 import com.deltasquad.platescanapp.presentation.editprofile.EditProfileScreen
 import com.deltasquad.platescanapp.presentation.home.HomeScreen
 import com.deltasquad.platescanapp.presentation.profile.ProfileScreen
+import com.deltasquad.platescanapp.presentation.profile.ProfileViewModel
 import com.deltasquad.platescanapp.presentation.records.RecordsScreen
 import com.deltasquad.platescanapp.presentation.reports.ReportsScreen
 import com.deltasquad.platescanapp.presentation.stats.StatsScreen
@@ -25,6 +26,7 @@ fun NavigationWrapper(
     modifier: Modifier = Modifier,
     auth: FirebaseAuth,
     rootNavController: NavHostController,
+    viewModel: ProfileViewModel,
     onLogout: () -> Unit
 ) {
     val navController = rememberNavController()
@@ -61,7 +63,8 @@ fun NavigationWrapper(
             composable(Screen.Home.route) { HomeScreen(navController) }
             composable(Screen.Profile.route) {
                 ProfileScreen(
-                    auth = auth,
+                    //auth = auth,
+                    viewModel = viewModel,
                     onLogout = onLogout,
                     onEditProfile = {
                         navController.navigate(Screen.EditProfile.route)

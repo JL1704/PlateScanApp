@@ -13,7 +13,13 @@ import com.deltasquad.platescanapp.presentation.components.UserInfo
 import com.google.firebase.auth.FirebaseAuth
 
 @Composable
-fun ProfileScreen(auth: FirebaseAuth, onLogout: () -> Unit, onEditProfile: () -> Unit) {
+fun ProfileScreen(
+    viewModel: ProfileViewModel,
+    onLogout: () -> Unit,
+    onEditProfile: () -> Unit
+) {
+    val profileState by viewModel.profile.collectAsState()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -21,16 +27,17 @@ fun ProfileScreen(auth: FirebaseAuth, onLogout: () -> Unit, onEditProfile: () ->
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.height(24.dp))
+
         CircleImageView(
-            imageUrl = "https://img.freepik.com/vector-premium/perfil-avatar-hombre-icono-redondo_24640-14044.jpg",
+            imageUrl = profileState?.image ?: "https://default.image.url",
             modifier = Modifier.size(120.dp)
         )
         Spacer(modifier = Modifier.height(32.dp))
 
         UserInfo(
-            username = "example1234",
-            email = "user@example.com",
-            phone = "+1 123 456 7890"
+            username = profileState?.username ?: "Loading...",
+            email = profileState?.email ?: "",
+            phone = profileState?.phone ?: ""
         )
 
         Spacer(modifier = Modifier.weight(1f))
@@ -41,29 +48,17 @@ fun ProfileScreen(auth: FirebaseAuth, onLogout: () -> Unit, onEditProfile: () ->
                 .padding(bottom = 40.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Button(
-                onClick = {
-                    onEditProfile()
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 8.dp)
-            ) {
+            Button(onClick = onEditProfile, modifier = Modifier.fillMaxWidth()) {
                 Text("Edit")
             }
 
-            Button(
-                onClick = {
-                    auth.signOut()
-                    onLogout() // <-- esto fuerza recomposición en AppNavigation
-                },
-                modifier = Modifier.fillMaxWidth()
-            ) {
+            Button(onClick = onLogout, modifier = Modifier.fillMaxWidth()) {
                 Text("Log Out")
             }
         }
     }
 }
+
 
 @Preview(showBackground = true)
 @Composable

@@ -19,11 +19,15 @@ import androidx.core.view.WindowCompat
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.deltasquad.platescanapp.data.auth.GoogleAuthUiClient
+import com.deltasquad.platescanapp.data.repository.ProfileRepository
 import com.deltasquad.platescanapp.presentation.navigation.AppNavigation
+import com.deltasquad.platescanapp.presentation.profile.ProfileViewModel
 import com.deltasquad.platescanapp.presentation.theme.PlateScanAppTheme
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 
 class MainActivity : ComponentActivity() {
@@ -38,10 +42,19 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        FirebaseApp.initializeApp(this)
+
+        // Inyección simple
+        val firestore = FirebaseFirestore.getInstance()
+        auth = Firebase.auth
+        //val auth = FirebaseAuth.getInstance()
+        val repository = ProfileRepository(firestore, auth)
+        val viewModel = ProfileViewModel(repository)
+
         enableEdgeToEdge()
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
-        auth = Firebase.auth
+
         googleAuthUiClient = GoogleAuthUiClient(this)
 
         // Configura el launcher para manejar el resultado del inicio de sesión de Google
@@ -74,13 +87,31 @@ class MainActivity : ComponentActivity() {
                         darkIcons = false
                     )
                 }
-
+/*
                 Scaffold(
                     modifier = Modifier
                         .fillMaxSize()
                 ) { paddingValues ->
-                    AppNavigation(auth, modifier = Modifier.padding(paddingValues), googleSignInLauncher = googleSignInLauncher)
+                    AppNavigation(
+                        auth,
+                        modifier = Modifier.padding(paddingValues),
+                        googleSignInLauncher = googleSignInLauncher),
+                        viewModel = viewModel
                 }
+
+ */
+                Scaffold(
+                    modifier = Modifier
+                        .fillMaxSize()
+                ) { paddingValues ->
+                    AppNavigation(
+                        auth = auth,
+                        modifier = Modifier.padding(paddingValues),
+                        googleSignInLauncher = googleSignInLauncher,
+                        viewModel = viewModel
+                    )
+                }
+
 
             }
         }

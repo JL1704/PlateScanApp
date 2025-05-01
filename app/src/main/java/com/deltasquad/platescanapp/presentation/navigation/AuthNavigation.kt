@@ -14,10 +14,11 @@ import com.deltasquad.platescanapp.presentation.login.LoginScreen
 import com.deltasquad.platescanapp.presentation.signup.SignUpScreen
 import com.google.firebase.auth.FirebaseAuth
 import androidx.activity.result.IntentSenderRequest
+import com.deltasquad.platescanapp.presentation.profile.ProfileViewModel
 
 
 @Composable
-fun AuthNavigation(navController: NavHostController, auth: FirebaseAuth) {
+fun AuthNavigation(navController: NavHostController, auth: FirebaseAuth, viewModel: ProfileViewModel) {
     val context = LocalContext.current
     val activity = context as? Activity
     val googleAuthUiClient = remember { GoogleAuthUiClient(context) }
@@ -94,6 +95,7 @@ fun AuthNavigation(navController: NavHostController, auth: FirebaseAuth) {
             NavigationWrapper(
                 auth = auth,
                 rootNavController = navController,
+                viewModel = viewModel,
                 onLogout = {
                     isAuthenticated = false
                     navController.navigate("initial") {

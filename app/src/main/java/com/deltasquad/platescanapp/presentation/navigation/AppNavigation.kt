@@ -10,10 +10,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
+import com.deltasquad.platescanapp.presentation.profile.ProfileViewModel
 import com.google.firebase.auth.FirebaseAuth
 
 @Composable
-fun AppNavigation(auth: FirebaseAuth, modifier: Modifier, googleSignInLauncher: ActivityResultLauncher<IntentSenderRequest>) {
+fun AppNavigation(
+    auth: FirebaseAuth,
+    modifier: Modifier,
+    googleSignInLauncher: ActivityResultLauncher<IntentSenderRequest>,
+    viewModel: ProfileViewModel
+) {
     val navController = rememberNavController()
     var isAuthenticated by remember { mutableStateOf(auth.currentUser != null) }
 
@@ -26,9 +32,10 @@ fun AppNavigation(auth: FirebaseAuth, modifier: Modifier, googleSignInLauncher: 
             modifier = modifier,
             auth = auth,
             rootNavController = navController,
+            viewModel = viewModel,
             onLogout = { isAuthenticated = false }
         )
     } else {
-        AuthNavigation(navController = navController, auth = auth)
+        AuthNavigation(navController = navController, auth = auth, viewModel = viewModel)
     }
 }
