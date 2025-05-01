@@ -52,4 +52,12 @@ class GoogleAuthUiClient(
             }
         }
     }
+
+    fun signOut(onComplete: (() -> Unit)? = null) {
+        oneTapClient.signOut()
+            .addOnCompleteListener {
+                onComplete?.invoke()
+            }
+    }
+
 }

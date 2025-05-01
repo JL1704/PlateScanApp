@@ -4,9 +4,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.IntentSenderRequest
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -16,16 +13,17 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color.Companion.Transparent
 import androidx.core.view.WindowCompat
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.deltasquad.platescanapp.data.auth.GoogleAuthUiClient
 import com.deltasquad.platescanapp.data.repository.ProfileRepository
+import com.deltasquad.platescanapp.presentation.auth.AuthViewModel
+import com.deltasquad.platescanapp.presentation.auth.AuthViewModelFactory
 import com.deltasquad.platescanapp.presentation.navigation.AppNavigation
 import com.deltasquad.platescanapp.presentation.profile.ProfileViewModel
 import com.deltasquad.platescanapp.presentation.theme.PlateScanAppTheme
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.firebase.FirebaseApp
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
@@ -33,10 +31,6 @@ import com.google.firebase.ktx.Firebase
 class MainActivity : ComponentActivity() {
 
     private lateinit var navHostController: NavHostController
-    private lateinit var auth: FirebaseAuth
-    private lateinit var googleAuthUiClient: GoogleAuthUiClient
-    private lateinit var googleSignInLauncher: ActivityResultLauncher<IntentSenderRequest>
-
 
     @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,35 +38,20 @@ class MainActivity : ComponentActivity() {
 
         FirebaseApp.initializeApp(this)
 
-        // Inyección simple
+        // Inicializamos dependencias necesarias
         val firestore = FirebaseFirestore.getInstance()
-        auth = Firebase.auth
-        //val auth = FirebaseAuth.getInstance()
+        val auth = Firebase.auth
         val repository = ProfileRepository(firestore, auth)
-        val viewModel = ProfileViewModel(repository)
+        val profileViewModel = ProfileViewModel(repository)
+
+        // ViewModel de autenticación con Factory
+        val authViewModel: AuthViewModel = ViewModelProvider(
+            this,
+            AuthViewModelFactory(auth, applicationContext)
+        )[AuthViewModel::class.java]
 
         enableEdgeToEdge()
         WindowCompat.setDecorFitsSystemWindows(window, false)
-
-
-        googleAuthUiClient = GoogleAuthUiClient(this)
-
-        // Configura el launcher para manejar el resultado del inicio de sesión de Google
-        googleSignInLauncher = registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result ->
-            if (result.resultCode == RESULT_OK) {
-                googleAuthUiClient.handleSignInResult(result.data) { success ->
-                    if (success) {
-                        // Aquí puedes manejar el éxito de la autenticación, redirigir a la pantalla principal, etc.
-                        navHostController.navigate("home") // Ajusta esto a tu flujo de navegación
-                    } else {
-                        // Aquí puedes manejar el error de autenticación
-                        // Mostrar un mensaje de error o intentar el proceso nuevamente
-                    }
-                }
-            } else {
-                // Maneja el caso cuando el usuario no completa el inicio de sesión
-            }
-        }
 
         setContent {
             navHostController = rememberNavController()
@@ -87,36 +66,23 @@ class MainActivity : ComponentActivity() {
                         darkIcons = false
                     )
                 }
-/*
-                Scaffold(
-                    modifier = Modifier
-                        .fillMaxSize()
-                ) { paddingValues ->
-                    AppNavigation(
-                        auth,
-                        modifier = Modifier.padding(paddingValues),
-                        googleSignInLauncher = googleSignInLauncher),
-                        viewModel = viewModel
-                }
 
- */
                 Scaffold(
-                    modifier = Modifier
-                        .fillMaxSize()
+                    modifier = Modifier.fillMaxSize()
                 ) { paddingValues ->
                     AppNavigation(
-                        auth = auth,
+                        navController = navHostController,
                         modifier = Modifier.padding(paddingValues),
-                        googleSignInLauncher = googleSignInLauncher,
-                        viewModel = viewModel
+                        authViewModel = authViewModel,
+                        profileViewModel = profileViewModel
                     )
                 }
-
-
             }
         }
     }
 }
+
+
 /*
 @Composable
 fun TestScreen() {

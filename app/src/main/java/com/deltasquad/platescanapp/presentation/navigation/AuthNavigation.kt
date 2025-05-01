@@ -8,42 +8,37 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.deltasquad.platescanapp.data.auth.GoogleAuthUiClient
 import com.deltasquad.platescanapp.presentation.initial.InitialScreen
 import com.deltasquad.platescanapp.presentation.login.LoginScreen
 import com.deltasquad.platescanapp.presentation.signup.SignUpScreen
 import com.google.firebase.auth.FirebaseAuth
-import androidx.activity.result.IntentSenderRequest
+import com.deltasquad.platescanapp.presentation.auth.AuthViewModel
 import com.deltasquad.platescanapp.presentation.profile.ProfileViewModel
 
-
 @Composable
-fun AuthNavigation(navController: NavHostController, auth: FirebaseAuth, viewModel: ProfileViewModel) {
+fun AuthNavigation(
+    navController: NavHostController,
+    authViewModel: AuthViewModel,
+    viewModel: ProfileViewModel
+) {
     val context = LocalContext.current
     val activity = context as? Activity
-    val googleAuthUiClient = remember { GoogleAuthUiClient(context) }
-
-    var isAuthenticated by remember { mutableStateOf(auth.currentUser != null) }
-
-    // Escuchar cambios de sesión
-    LaunchedEffect(auth.currentUser) {
-        isAuthenticated = auth.currentUser != null
-    }
+    val isAuthenticated by authViewModel.isAuthenticated.collectAsState()
 
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartIntentSenderForResult()
     ) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
             val data = result.data
-            googleAuthUiClient.handleSignInResult(data) { isSuccessful ->
-                if (isSuccessful) {
+            authViewModel.handleSignInResult(
+                data,
+                onSuccess = {
                     navController.navigate("main") {
                         popUpTo("initial") { inclusive = true }
                     }
-                } else {
-                    // Puedes mostrar un error si quieres
-                }
-            }
+                },
+                onFailure = { /* Mostrar error si se desea */ }
+            )
         }
     }
 
@@ -57,10 +52,8 @@ fun AuthNavigation(navController: NavHostController, auth: FirebaseAuth, viewMod
                 navigateToSignUp = { navController.navigate("signUp") },
                 onGoogleSignInClick = {
                     activity?.let {
-                        googleAuthUiClient.signIn(it) { intentSender ->
-                            launcher.launch(
-                                IntentSenderRequest.Builder(intentSender).build()
-                            )
+                        authViewModel.signInWithGoogle(it) { request ->
+                            launcher.launch(request)
                         }
                     }
                 }
@@ -69,7 +62,7 @@ fun AuthNavigation(navController: NavHostController, auth: FirebaseAuth, viewMod
 
         composable("logIn") {
             LoginScreen(
-                auth = auth,
+                auth = FirebaseAuth.getInstance(),
                 navController = navController,
                 onLoginSuccess = {
                     navController.navigate("main") {
@@ -81,7 +74,7 @@ fun AuthNavigation(navController: NavHostController, auth: FirebaseAuth, viewMod
 
         composable("signUp") {
             SignUpScreen(
-                auth = auth,
+                auth = FirebaseAuth.getInstance(),
                 navController = navController,
                 onSignUpSuccess = {
                     navController.navigate("main") {
@@ -93,11 +86,11 @@ fun AuthNavigation(navController: NavHostController, auth: FirebaseAuth, viewMod
 
         composable("main") {
             NavigationWrapper(
-                auth = auth,
+                auth = FirebaseAuth.getInstance(),
                 rootNavController = navController,
                 viewModel = viewModel,
                 onLogout = {
-                    isAuthenticated = false
+                    authViewModel.signOut()
                     navController.navigate("initial") {
                         popUpTo("main") { inclusive = true }
                     }
@@ -106,5 +99,3 @@ fun AuthNavigation(navController: NavHostController, auth: FirebaseAuth, viewMod
         }
     }
 }
-
-

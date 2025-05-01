@@ -27,6 +27,7 @@ import com.google.firebase.auth.FirebaseAuth
 
 @Composable
 fun LoginScreen(
+    //auth: AuthViewModel,
     auth: FirebaseAuth,
     navController: NavHostController,
     onLoginSuccess: () -> Unit

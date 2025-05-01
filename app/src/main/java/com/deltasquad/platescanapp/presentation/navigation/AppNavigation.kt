@@ -1,41 +1,41 @@
 package com.deltasquad.platescanapp.presentation.navigation
 
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.IntentSenderRequest
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.navigation.compose.rememberNavController
+import androidx.navigation.NavHostController
+import com.deltasquad.platescanapp.presentation.auth.AuthViewModel
 import com.deltasquad.platescanapp.presentation.profile.ProfileViewModel
 import com.google.firebase.auth.FirebaseAuth
 
+
+
 @Composable
 fun AppNavigation(
-    auth: FirebaseAuth,
+    navController: NavHostController,
     modifier: Modifier,
-    googleSignInLauncher: ActivityResultLauncher<IntentSenderRequest>,
-    viewModel: ProfileViewModel
+    authViewModel: AuthViewModel,
+    profileViewModel: ProfileViewModel
 ) {
-    val navController = rememberNavController()
-    var isAuthenticated by remember { mutableStateOf(auth.currentUser != null) }
-
-    LaunchedEffect(auth.currentUser) {
-        isAuthenticated = auth.currentUser != null
-    }
+    val isAuthenticated by authViewModel.isAuthenticated.collectAsState()
 
     if (isAuthenticated) {
         NavigationWrapper(
             modifier = modifier,
-            auth = auth,
+            auth = authViewModel.getCurrentUser()?.let { FirebaseAuth.getInstance() } ?: FirebaseAuth.getInstance(),
             rootNavController = navController,
-            viewModel = viewModel,
-            onLogout = { isAuthenticated = false }
+            viewModel = profileViewModel,
+            onLogout = {
+                authViewModel.signOut()
+            }
         )
     } else {
-        AuthNavigation(navController = navController, auth = auth, viewModel = viewModel)
+        AuthNavigation(
+            navController = navController,
+            authViewModel = authViewModel,
+            viewModel = profileViewModel
+        )
     }
 }
+
