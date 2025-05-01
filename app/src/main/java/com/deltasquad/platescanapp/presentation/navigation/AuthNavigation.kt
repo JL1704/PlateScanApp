@@ -14,7 +14,6 @@ import com.deltasquad.platescanapp.presentation.login.LoginScreen
 import com.deltasquad.platescanapp.presentation.signup.SignUpScreen
 import com.google.firebase.auth.FirebaseAuth
 import androidx.activity.result.IntentSenderRequest
-import androidx.compose.ui.Modifier
 
 
 @Composable

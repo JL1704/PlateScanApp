@@ -7,32 +7,18 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.graphics.Color.Companion.Transparent
 import androidx.core.view.WindowCompat
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.deltasquad.platescanapp.data.auth.GoogleAuthUiClient
-import com.deltasquad.platescanapp.presentation.components.ContentCard
-import com.deltasquad.platescanapp.presentation.home.HomeScreen
 import com.deltasquad.platescanapp.presentation.navigation.AppNavigation
 import com.deltasquad.platescanapp.presentation.theme.PlateScanAppTheme
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
@@ -81,12 +67,11 @@ class MainActivity : ComponentActivity() {
 
             PlateScanAppTheme(windowSize = windowSize.widthSizeClass) {
                 val systemUiController = rememberSystemUiController()
-                val useDarkIcons = !isSystemInDarkTheme()
 
                 SideEffect {
                     systemUiController.setSystemBarsColor(
-                        color = Color.Black,
-                        darkIcons = useDarkIcons
+                        color = Transparent,
+                        darkIcons = false
                     )
                 }
 
@@ -97,23 +82,11 @@ class MainActivity : ComponentActivity() {
                     AppNavigation(auth, modifier = Modifier.padding(paddingValues), googleSignInLauncher = googleSignInLauncher)
                 }
 
-
-
             }
         }
     }
 }
-
 /*
-                Scaffold(
-                    containerColor = MaterialTheme.colorScheme.background,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .windowInsetsPadding(WindowInsets.statusBars)
-                ) { paddingValues ->
-                    AppNavigation(auth, modifier = Modifier.padding(paddingValues), googleSignInLauncher = googleSignInLauncher)
-                }*/
-
 @Composable
 fun TestScreen() {
     ContentCard(
@@ -143,4 +116,4 @@ fun AppPreview() {
     PlateScanAppTheme {
         //HomeScreen()
     }
-}
+}*/
