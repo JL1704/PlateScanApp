@@ -15,6 +15,9 @@ class ProfileViewModel(
     private val _profile = MutableStateFlow<UserProfile?>(null)
     val profile: StateFlow<UserProfile?> = _profile
 
+    private val _isRefreshing = MutableStateFlow(false)
+    val isRefreshing: StateFlow<Boolean> = _isRefreshing
+
     init {
         syncProfile()
     }
@@ -25,4 +28,16 @@ class ProfileViewModel(
             _profile.value = repository.getUserProfile()
         }
     }
+
+
+    fun refreshProfile() {
+        viewModelScope.launch {
+            _isRefreshing.value = true
+            repository.createUserProfileIfNotExists() // <- aquí estaba el error
+            _profile.value = repository.getUserProfile()
+            _isRefreshing.value = false
+        }
+    }
+
+
 }

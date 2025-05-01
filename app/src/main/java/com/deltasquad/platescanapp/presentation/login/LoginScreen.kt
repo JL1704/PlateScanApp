@@ -158,17 +158,21 @@ fun LoginScreen(
             // Botón Login
             Button(
                 onClick = {
-                    auth.signInWithEmailAndPassword(email, password)
-                        .addOnCompleteListener { task ->
-                            if (task.isSuccessful) {
-                                Log.i("Luis", "Login Ok")
-                                onLoginSuccess()
-                            } else {
-                                val message = task.exception?.localizedMessage ?: "Login failed"
-                                Log.e("Luis", "Login KO: $message")
-                                errorMessage = message // Usamos el estado
+                    if (email.isBlank() || password.isBlank()) {
+                        errorMessage = "Please complete all fields"
+                    } else {
+                        auth.signInWithEmailAndPassword(email, password)
+                            .addOnCompleteListener { task ->
+                                if (task.isSuccessful) {
+                                    Log.i("Luis", "Login Ok")
+                                    onLoginSuccess()
+                                } else {
+                                    val message = task.exception?.localizedMessage ?: "Login failed"
+                                    Log.e("Luis", "Login KO: $message")
+                                    errorMessage = message
+                                }
                             }
-                        }
+                    }
                 },
                 modifier = Modifier
                     .fillMaxWidth()

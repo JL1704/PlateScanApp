@@ -64,7 +64,7 @@ play-services-auth = { group = "com.google.android.gms", name = "play-services-a
 androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "coreSplashscreen" }
 guava-android = { group = "com.google.guava", name = "guava", version = "32.1.3-android" }
 lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycle" }
-
+androidx-material = { group = "androidx.compose.material", name = "material", version = "1.8.0" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

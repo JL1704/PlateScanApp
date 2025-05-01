@@ -16,16 +16,29 @@ class ProfileRepository(
         val docRef = profilesCollection.document(currentUser.uid)
         val snapshot = docRef.get().await()
 
-        if (!snapshot.exists()) {
-            val newProfile = UserProfile(
-                username = currentUser.displayName ?: "Unnamed",
-                email = currentUser.email ?: "",
-                phone = currentUser.phoneNumber ?: "",
-                image = currentUser.photoUrl?.toString() ?: ""
-            )
+        val currentData = snapshot.toObject(UserProfile::class.java)
+
+        val newProfile = UserProfile(
+            username = currentUser.displayName ?: currentData?.username ?: "Unnamed",
+            email = currentUser.email ?: currentData?.email ?: "",
+            phone = currentUser.phoneNumber ?: currentData?.phone ?: "",
+            image = currentUser.photoUrl?.toString() ?: currentData?.image ?: ""
+        )
+
+        if (!snapshot.exists() || currentData == null) {
             docRef.set(newProfile).await()
+        } else {
+            docRef.update(
+                mapOf(
+                    "username" to newProfile.username,
+                    "email" to newProfile.email,
+                    "phone" to newProfile.phone,
+                    "image" to newProfile.image
+                )
+            ).await()
         }
     }
+
 
     suspend fun getUserProfile(): UserProfile? {
         val currentUser = auth.currentUser ?: return null
