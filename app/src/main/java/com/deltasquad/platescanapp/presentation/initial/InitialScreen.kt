@@ -28,7 +28,7 @@ import com.deltasquad.platescanapp.presentation.theme.*
 fun InitialScreen(
     navigateToLogin: () -> Unit = {},
     navigateToSignUp: () -> Unit = {},
-    onGoogleSignInClick: () -> Unit // Asegúrate de que este parámetro esté conectado
+    onGoogleSignInClick: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -44,13 +44,13 @@ fun InitialScreen(
         )
         Spacer(modifier = Modifier.weight(1f))
         Text(
-            "Registrate gratis",
+            "Sign up for free",
             color = Color.White,
             fontSize = 38.sp,
             fontWeight = FontWeight.Bold
         )
         Text(
-            "Y escanea placas",
+            "And scans plates",
             color = Color.White,
             fontSize = 38.sp,
             fontWeight = FontWeight.Bold
