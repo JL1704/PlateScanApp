@@ -19,7 +19,17 @@ class ProfileViewModel(
     val isRefreshing: StateFlow<Boolean> = _isRefreshing
 
     init {
-        syncProfile()
+        viewModelScope.launch {
+            repository.createUserProfileIfNotExists() // Se asegura que existe una vez
+            _profile.value = repository.getUserProfile()
+        }
+    }
+
+    fun syncProfileManually() {
+        viewModelScope.launch {
+            repository.createUserProfileIfNotExists()
+            _profile.value = repository.getUserProfile()
+        }
     }
 
     private fun syncProfile() {
@@ -29,15 +39,25 @@ class ProfileViewModel(
         }
     }
 
-
     fun refreshProfile() {
         viewModelScope.launch {
             _isRefreshing.value = true
-            repository.createUserProfileIfNotExists() // <- aquí estaba el error
-            _profile.value = repository.getUserProfile()
+            _profile.value = repository.getUserProfile() // Solo obtener, sin crear ni actualizar
             _isRefreshing.value = false
         }
     }
 
+    fun updateUserProfile(username: String, phone: String, imageUrl: String? = null, onResult: (Boolean) -> Unit) {
+        viewModelScope.launch {
+            try {
+                repository.updateUserProfile(username, phone, imageUrl)
+                _profile.value = repository.getUserProfile() // Actualiza el estado
+                onResult(true)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                onResult(false)
+            }
+        }
+    }
 
 }

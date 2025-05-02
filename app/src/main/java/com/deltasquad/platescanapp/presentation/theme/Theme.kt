@@ -26,7 +26,7 @@ private val DarkColorScheme = darkColorScheme(
     primary = primaryGreen,
     secondary = primaryWhite,
     tertiary = primaryBrown,
-    surface = primaryBlack,  // ← superficie oscura
+    surface = secondaryBlack,  // ← superficie oscura
     background = primaryBlack // ← fondo oscuro real
 )
 
@@ -35,7 +35,7 @@ private val LightColorScheme = lightColorScheme(
     primary = primaryGreen,
     secondary = primaryBlack,
     tertiary = primaryBrown,
-    surface = primaryWhite,
+    surface = secondaryWhite,
     background = primaryWhite
 )
 

@@ -3,6 +3,7 @@ package com.deltasquad.platescanapp.presentation.navigation
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -27,7 +28,8 @@ fun NavigationWrapper(
     auth: FirebaseAuth,
     rootNavController: NavHostController,
     viewModel: ProfileViewModel,
-    onLogout: () -> Unit
+    onLogout: () -> Unit,
+    onProfileSync: () -> Unit
 ) {
     val navController = rememberNavController()
 
@@ -35,6 +37,10 @@ fun NavigationWrapper(
     val currentBackStackEntry = navController.currentBackStackEntryAsState()
     val currentRoute = currentBackStackEntry.value?.destination?.route
     val selectedIndex = screens.indexOfFirst { it.route == currentRoute }//.coerceAtLeast(0)
+
+    LaunchedEffect(Unit) {
+        onProfileSync() // 👈 Solo una vez al entrar al wrapper
+    }
 
     Scaffold(
         topBar = { PSTopAppBar(onMenuClick = { }) },
@@ -71,7 +77,24 @@ fun NavigationWrapper(
                     }
                     )
             }
-            composable(Screen.EditProfile.route){ EditProfileScreen() }
+            composable(Screen.EditProfile.route) {
+                EditProfileScreen(
+                    viewModel = viewModel,
+                    onSave = { username, phone, imageUri ->
+                        val imageUrl = imageUri?.toString()
+                        viewModel.updateUserProfile(username, phone, imageUrl) { success ->
+                            if (success) {
+                                navController.popBackStack() // 👈 usa este, no rootNavController
+                            } else {
+                                // Mostrar error
+                            }
+                        }
+                    },
+                    onCancel = {
+                        navController.popBackStack() // 👈 usa este también
+                    }
+                )
+            }
             composable(Screen.Records.route) { RecordsScreen() }
             composable(Screen.Reports.route) { ReportsScreen() }
             composable(Screen.Stats.route) { StatsScreen() }

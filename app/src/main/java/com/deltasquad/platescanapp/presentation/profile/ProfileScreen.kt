@@ -15,6 +15,16 @@ import com.deltasquad.platescanapp.presentation.components.UserInfo
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
+import com.deltasquad.platescanapp.presentation.components.ButtonGroup
+import com.deltasquad.platescanapp.presentation.theme.primaryBrown
+import com.deltasquad.platescanapp.presentation.theme.primaryGreen
+import com.deltasquad.platescanapp.presentation.theme.primaryWhite
+import com.deltasquad.platescanapp.presentation.theme.secondaryGreen
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -69,12 +79,24 @@ fun ProfileScreen(
                     .padding(bottom = 40.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Button(onClick = onEditProfile, modifier = Modifier.fillMaxWidth()) {
-                    Text("Edit")
+                Button(
+                    onClick = onEditProfile,
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(
+                        primaryGreen
+                    )
+                ) {
+                    Text("Edit",  color = Color.White, fontWeight = FontWeight.Bold)
                 }
 
-                Button(onClick = onLogout, modifier = Modifier.fillMaxWidth()) {
-                    Text("Log Out")
+                Button(
+                    onClick = onLogout,
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(
+                        Color.Red
+                    )
+                ) {
+                    Text("Log Out", color = Color.White, fontWeight = FontWeight.Bold)
                 }
             }
         }

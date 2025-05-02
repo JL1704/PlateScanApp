@@ -28,7 +28,8 @@ fun AppNavigation(
             viewModel = profileViewModel,
             onLogout = {
                 authViewModel.signOut()
-            }
+            },
+            onProfileSync = { profileViewModel.syncProfileManually() }
         )
     } else {
         AuthNavigation(

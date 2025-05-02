@@ -94,7 +94,8 @@ fun AuthNavigation(
                     navController.navigate("initial") {
                         popUpTo("main") { inclusive = true }
                     }
-                }
+                },
+                onProfileSync = { viewModel.syncProfileManually() }
             )
         }
     }

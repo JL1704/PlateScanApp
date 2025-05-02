@@ -5,6 +5,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 
+
 class ProfileRepository(
     private val firestore: FirebaseFirestore,
     private val auth: FirebaseAuth
@@ -16,33 +17,37 @@ class ProfileRepository(
         val docRef = profilesCollection.document(currentUser.uid)
         val snapshot = docRef.get().await()
 
-        val currentData = snapshot.toObject(UserProfile::class.java)
-
-        val newProfile = UserProfile(
-            username = currentUser.displayName ?: currentData?.username ?: "Unnamed",
-            email = currentUser.email ?: currentData?.email ?: "",
-            phone = currentUser.phoneNumber ?: currentData?.phone ?: "",
-            image = currentUser.photoUrl?.toString() ?: currentData?.image ?: ""
-        )
-
-        if (!snapshot.exists() || currentData == null) {
+        if (!snapshot.exists()) {
+            val newProfile = UserProfile(
+                username = currentUser.displayName ?: "Unnamed",
+                email = currentUser.email ?: "",
+                phone = currentUser.phoneNumber ?: "",
+                image = currentUser.photoUrl?.toString() ?: ""
+            )
             docRef.set(newProfile).await()
-        } else {
-            docRef.update(
-                mapOf(
-                    "username" to newProfile.username,
-                    "email" to newProfile.email,
-                    "phone" to newProfile.phone,
-                    "image" to newProfile.image
-                )
-            ).await()
         }
     }
-
 
     suspend fun getUserProfile(): UserProfile? {
         val currentUser = auth.currentUser ?: return null
         val snapshot = profilesCollection.document(currentUser.uid).get().await()
         return snapshot.toObject(UserProfile::class.java)
     }
+
+    suspend fun updateUserProfile(username: String, phone: String, imageUrl: String?) {
+        val currentUser = auth.currentUser ?: return
+        val userDocRef = profilesCollection.document(currentUser.uid)
+
+        val updates = mutableMapOf<String, Any>(
+            "username" to username,
+            "phone" to phone
+        )
+        imageUrl?.let {
+            updates["image"] = it
+        }
+
+        userDocRef.update(updates).await()
+    }
+
+
 }
