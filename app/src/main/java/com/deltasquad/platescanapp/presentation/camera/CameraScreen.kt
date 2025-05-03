@@ -20,11 +20,16 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import java.io.File
 import android.content.ContentValues
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Build
 import android.provider.MediaStore
-import java.io.FileInputStream
-import java.io.OutputStream
-
+import androidx.compose.ui.graphics.Color
+import android.graphics.Matrix
+import android.view.Surface
+import android.view.WindowManager
+import androidx.compose.foundation.background
+import androidx.compose.ui.unit.Dp
 
 @Composable
 fun CameraScreen(viewModel: CameraViewModel = viewModel()) {
@@ -35,19 +40,52 @@ fun CameraScreen(viewModel: CameraViewModel = viewModel()) {
 
     var photoUri by remember { mutableStateOf<Uri?>(null) }
 
-    // AndroidView para mostrar la cámara
-    AndroidView(
-        factory = { previewView },
-        modifier = Modifier.fillMaxSize()
-    )
+    Box(modifier = Modifier.fillMaxSize()) {
+        // Vista de la cámara
+        AndroidView(
+            factory = { previewView },
+            modifier = Modifier.fillMaxSize()
+        )
 
+        // Marco guía (superpuesto)
+        Box(
+            modifier = Modifier.align(Alignment.Center)
+        ) {
+            ScanFrame() // Usamos el nuevo marco estilizado
+        }
+
+        // Botón para capturar la imagen
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            contentAlignment = Alignment.BottomCenter
+        ) {
+            Button(
+                onClick = {
+                    takePhotoAndCrop(context, previewView, viewModel) { uri ->
+                        photoUri = uri
+                        Toast.makeText(context, "Foto capturada: $uri", Toast.LENGTH_SHORT).show()
+                    }
+                },
+                modifier = Modifier.fillMaxWidth(0.6f)
+            ) {
+                Text("Capturar foto")
+            }
+        }
+    }
+
+    // Configurar la cámara
     LaunchedEffect(true) {
         val cameraProvider = cameraProviderFuture.get()
         val preview = Preview.Builder().build().apply {
             setSurfaceProvider(previewView.surfaceProvider)
         }
 
-        val imageCapture = ImageCapture.Builder().build()
+        val imageCapture = ImageCapture.Builder()
+            .setCaptureMode(ImageCapture.CAPTURE_MODE_MAXIMIZE_QUALITY)
+            .build()
+
         viewModel.imageCapture = imageCapture
 
         val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
@@ -64,31 +102,15 @@ fun CameraScreen(viewModel: CameraViewModel = viewModel()) {
             Log.e("CameraScreen", "Error al iniciar la cámara", e)
         }
     }
-
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.BottomCenter
-    ) {
-        Button(
-            onClick = {
-                takePhoto(context, viewModel) { uri ->
-                    photoUri = uri
-                    Toast.makeText(context, "Foto capturada: $uri", Toast.LENGTH_SHORT).show()
-                }
-            },
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth(0.6f)
-        ) {
-            Text("Capturar foto")
-        }
-    }
 }
 
-fun takePhoto(context: Context, viewModel: CameraViewModel, onPhotoCaptured: (Uri) -> Unit) {
+fun takePhotoAndCrop(
+    context: Context,
+    previewView: PreviewView,
+    viewModel: CameraViewModel,
+    onPhotoCaptured: (Uri) -> Unit
+) {
     val imageCapture = viewModel.imageCapture ?: return
-
-    // Guardar temporalmente
     val tempFile = File(context.cacheDir, "IMG_${System.currentTimeMillis()}.jpg")
     val outputOptions = ImageCapture.OutputFileOptions.Builder(tempFile).build()
 
@@ -97,39 +119,45 @@ fun takePhoto(context: Context, viewModel: CameraViewModel, onPhotoCaptured: (Ur
         ContextCompat.getMainExecutor(context),
         object : ImageCapture.OnImageSavedCallback {
             override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
-                // Ahora mover al MediaStore
-                val contentValues = ContentValues().apply {
-                    put(MediaStore.MediaColumns.DISPLAY_NAME, tempFile.name)
-                    put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                        put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/PlateScanApp")
+                try {
+                    var bitmap = BitmapFactory.decodeFile(tempFile.absolutePath)
+
+                    // 🔁 Corregir rotación
+                    val rotation = (context.getSystemService(Context.WINDOW_SERVICE) as WindowManager)
+                        .defaultDisplay.rotation
+
+                    val matrix = Matrix()
+                    when (rotation) {
+                        Surface.ROTATION_0 -> matrix.postRotate(90f)
+                        Surface.ROTATION_270 -> matrix.postRotate(180f)
+                        // Puedes ajustar más según el comportamiento de tu dispositivo
                     }
-                }
 
-                val resolver = context.contentResolver
-                val uri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+                    bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
 
-                if (uri != null) {
-                    try {
-                        val outputStream: OutputStream? = resolver.openOutputStream(uri)
-                        val inputStream = FileInputStream(tempFile)
+                    // Tamaño real del bitmap corregido
+                    val bitmapWidth = bitmap.width
+                    val bitmapHeight = bitmap.height
 
-                        inputStream.copyTo(outputStream!!)
-                        inputStream.close()
-                        outputStream.close()
+                    // 🟥 Calculamos el recorte centrado
+                    val cropWidth = (bitmapWidth * 0.6).toInt()
+                    val cropHeight = (bitmapHeight * 0.2).toInt()
+                    val cropX = (bitmapWidth - cropWidth) / 2
+                    val cropY = (bitmapHeight - cropHeight) / 2
 
-                        viewModel.onPhotoCaptured(uri)
-                        onPhotoCaptured(uri)
+                    val croppedBitmap = Bitmap.createBitmap(bitmap, cropX, cropY, cropWidth, cropHeight)
 
-                        Toast.makeText(context, "Foto guardada en la galería 🎉", Toast.LENGTH_SHORT).show()
-                    } catch (e: Exception) {
-                        Log.e("CameraCapture", "Error al copiar imagen a la galería", e)
-                        Toast.makeText(context, "Error al guardar la foto", Toast.LENGTH_SHORT).show()
-                    } finally {
-                        tempFile.delete() // Borrar temporal
-                    }
-                } else {
-                    Toast.makeText(context, "No se pudo crear el archivo en galería", Toast.LENGTH_SHORT).show()
+                    // Guardar imagen original y recortada
+                    val originalUri = saveBitmapToGallery(context, bitmap, "original_${tempFile.name}")
+                    val croppedUri = saveBitmapToGallery(context, croppedBitmap, "cropped_${tempFile.name}")
+
+                    viewModel.onPhotoCaptured(originalUri!!)
+                    onPhotoCaptured(croppedUri!!)
+
+                    tempFile.delete()
+                } catch (e: Exception) {
+                    Log.e("CameraCapture", "Error al recortar o guardar", e)
+                    Toast.makeText(context, "Error al procesar la imagen", Toast.LENGTH_SHORT).show()
                 }
             }
 
@@ -141,9 +169,72 @@ fun takePhoto(context: Context, viewModel: CameraViewModel, onPhotoCaptured: (Ur
     )
 }
 
+fun saveBitmapToGallery(context: Context, bitmap: Bitmap, name: String): Uri? {
+    val contentValues = ContentValues().apply {
+        put(MediaStore.MediaColumns.DISPLAY_NAME, name)
+        put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/PlateScanApp")
+        }
+    }
+
+    val resolver = context.contentResolver
+    val uri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+
+    uri?.let {
+        resolver.openOutputStream(it)?.use { out ->
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out)
+        }
+    }
+
+    return uri
+}
+
 @Composable
 fun CameraScreenEntryPoint() {
     RequestCameraPermission {
         CameraScreen()
+    }
+}
+
+@Composable
+fun ScanFrame(
+    width: Dp = 300.dp,
+    height: Dp = 100.dp,
+    color: Color = Color.Cyan,
+    strokeWidth: Dp = 4.dp,
+    cornerLength: Dp = 24.dp
+) {
+    Box(
+        modifier = Modifier
+            .size(width, height)
+    ) {
+        val borderModifier = Modifier
+            .absoluteOffset()
+            .width(strokeWidth)
+            .height(cornerLength)
+            .background(color)
+
+        val horizontalBorderModifier = Modifier
+            .absoluteOffset()
+            .height(strokeWidth)
+            .width(cornerLength)
+            .background(color)
+
+        // Esquina superior izquierda
+        Box(modifier = borderModifier.align(Alignment.TopStart))
+        Box(modifier = horizontalBorderModifier.align(Alignment.TopStart))
+
+        // Esquina superior derecha
+        Box(modifier = borderModifier.align(Alignment.TopEnd))
+        Box(modifier = horizontalBorderModifier.align(Alignment.TopEnd))
+
+        // Esquina inferior izquierda
+        Box(modifier = borderModifier.align(Alignment.BottomStart))
+        Box(modifier = horizontalBorderModifier.align(Alignment.BottomStart))
+
+        // Esquina inferior derecha
+        Box(modifier = borderModifier.align(Alignment.BottomEnd))
+        Box(modifier = horizontalBorderModifier.align(Alignment.BottomEnd))
     }
 }
