@@ -1,6 +1,8 @@
 package com.deltasquad.platescanapp.presentation.editprofile
 
 import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -15,6 +17,8 @@ import androidx.core.net.toUri
 import coil.compose.rememberAsyncImagePainter
 import com.deltasquad.platescanapp.presentation.profile.ProfileViewModel
 import com.deltasquad.platescanapp.presentation.theme.primaryGreen
+import java.io.File
+import java.io.FileOutputStream
 
 @Composable
 fun EditProfileScreen(
@@ -22,9 +26,9 @@ fun EditProfileScreen(
     onSave: (username: String, phone: String, imageUri: Uri?) -> Unit = { _, _, _ -> },
     onCancel: () -> Unit = {}
 ) {
+    val context = LocalContext.current
     val profileState by viewModel.profile.collectAsState()
 
-    // Esperamos a que cargue el perfil
     if (profileState == null) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             CircularProgressIndicator()
@@ -34,7 +38,26 @@ fun EditProfileScreen(
 
     var username by remember { mutableStateOf(profileState!!.username) }
     var phone by remember { mutableStateOf(profileState!!.phone) }
-    var imageUri by remember { mutableStateOf<Uri?>(profileState!!.image?.toUri()) }
+    var imageUri by remember { mutableStateOf(profileState!!.image?.toUri()) }
+
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        uri?.let {
+            // Copiar imagen al almacenamiento interno
+            val inputStream = context.contentResolver.openInputStream(uri)
+            val fileName = "profile_image.jpg"
+            val file = File(context.filesDir, fileName)
+            val outputStream = FileOutputStream(file)
+
+            inputStream?.copyTo(outputStream)
+
+            inputStream?.close()
+            outputStream.close()
+
+            imageUri = file.toUri()
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -44,31 +67,32 @@ fun EditProfileScreen(
     ) {
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Imagen de perfil
+        // Imagen de perfil con botón para cambiar
         imageUri?.let {
             Image(
                 painter = rememberAsyncImagePainter(it),
                 contentDescription = "Profile Image",
                 modifier = Modifier
                     .size(120.dp)
-                    .clickable {
-                        // Aquí irá el selector de imagen
-                    }
+                    .clickable { launcher.launch("image/*") }
             )
         } ?: Box(
             modifier = Modifier
                 .size(120.dp)
-                .clickable {
-                    // Selector de imagen
-                },
+                .clickable { launcher.launch("image/*") },
             contentAlignment = Alignment.Center
         ) {
             Text("Select Image")
         }
 
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Button(onClick = { launcher.launch("image/*") }) {
+            Text("Cambiar Imagen")
+        }
+
         Spacer(modifier = Modifier.height(24.dp))
 
-        // Username
         OutlinedTextField(
             value = username,
             onValueChange = { username = it },
@@ -78,7 +102,6 @@ fun EditProfileScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Phone
         OutlinedTextField(
             value = phone,
             onValueChange = { phone = it },
@@ -88,7 +111,6 @@ fun EditProfileScreen(
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        // Botones
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
@@ -103,7 +125,6 @@ fun EditProfileScreen(
             Button(
                 onClick = {
                     onSave(username, phone, imageUri)
-
                 },
                 colors = ButtonDefaults.buttonColors(containerColor = primaryGreen)
             ) {
