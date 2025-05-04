@@ -22,7 +22,9 @@ class RecordsViewModel : ViewModel() {
             .orderBy("date", com.google.firebase.firestore.Query.Direction.DESCENDING)
             .get()
             .addOnSuccessListener { result ->
-                val scans = result.mapNotNull { it.toObject(ScanRecord::class.java) }
+                val scans = result.mapNotNull { doc ->
+                    doc.toObject(ScanRecord::class.java)?.copy(id = doc.id)
+                }
                 _latestScans.value = scans
             }
     }

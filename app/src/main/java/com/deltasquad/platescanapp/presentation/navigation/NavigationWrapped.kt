@@ -102,7 +102,7 @@ fun NavigationWrapper(
 
             composable("details/{scanId}") { backStackEntry ->
                 val scanId = backStackEntry.arguments?.getString("scanId") ?: ""
-                DetailsScreen(scanId = scanId)
+                DetailsScreen(scanId = scanId, navController)
             }
 
         }

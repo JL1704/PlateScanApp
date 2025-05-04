@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -31,6 +32,7 @@ import com.deltasquad.platescanapp.R
 import com.deltasquad.platescanapp.presentation.components.ContentCard
 import com.deltasquad.platescanapp.presentation.components.SearchBar
 import com.deltasquad.platescanapp.presentation.components.SectionLabel
+import com.deltasquad.platescanapp.presentation.navigation.Screen
 import com.deltasquad.platescanapp.presentation.theme.PlateScanAppTheme
 import com.deltasquad.platescanapp.presentation.theme.primaryBrown
 
@@ -58,7 +60,7 @@ fun RecordsScreen(navController: NavHostController, viewModel: RecordsViewModel 
             Icon(
                 painter = painterResource(id = R.drawable.ic_back_24),
                 contentDescription = "Back",
-                tint = primaryBrown,
+                tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier
                     .padding(start = 16.dp)
                     .size(28.dp)
@@ -102,7 +104,9 @@ fun RecordsScreen(navController: NavHostController, viewModel: RecordsViewModel 
                 plate = scan.plate,
                 date = scan.date,
                 state = scan.state,
-                onClick = { /* Navegar a detalle si deseas */ }
+                onClick = {
+                    navController.navigate(Screen.Details.createRoute(scan.id))
+                }
             )
         }
     }
