@@ -1,6 +1,7 @@
 package com.deltasquad.platescanapp.data.model
 
 data class ScanRecord(
+    val id: String = "",
     val plate: String = "AAA-123-A",
     val image: String = "",
     val croppedImage: String = "",

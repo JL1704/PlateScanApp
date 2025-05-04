@@ -13,6 +13,7 @@ import androidx.navigation.compose.rememberNavController
 import com.deltasquad.platescanapp.presentation.camera.CameraScreenEntryPoint
 import com.deltasquad.platescanapp.presentation.components.BottomNavigationView
 import com.deltasquad.platescanapp.presentation.components.PSTopAppBar
+import com.deltasquad.platescanapp.presentation.details.DetailsScreen
 import com.deltasquad.platescanapp.presentation.editprofile.EditProfileScreen
 import com.deltasquad.platescanapp.presentation.home.HomeScreen
 import com.deltasquad.platescanapp.presentation.profile.ProfileScreen
@@ -98,6 +99,11 @@ fun NavigationWrapper(
             composable(Screen.Records.route) { RecordsScreen(navController) }
             composable(Screen.Reports.route) { ReportsScreen() }
             composable(Screen.Stats.route) { StatsScreen() }
+
+            composable("details/{scanId}") { backStackEntry ->
+                val scanId = backStackEntry.arguments?.getString("scanId") ?: ""
+                DetailsScreen(scanId = scanId)
+            }
 
         }
     }

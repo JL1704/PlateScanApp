@@ -1,4 +1,4 @@
-package com.deltasquad.platescanapp.presentation.home
+package com.deltasquad.platescanapp.presentation.details
 
 import androidx.lifecycle.ViewModel
 import com.deltasquad.platescanapp.data.model.ScanRecord
@@ -7,27 +7,23 @@ import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-class HomeViewModel : ViewModel() {
+class DetailViewModel : ViewModel() {
     private val db = FirebaseFirestore.getInstance()
     private val auth = FirebaseAuth.getInstance()
 
-    private val _latestScans = MutableStateFlow<List<ScanRecord>>(emptyList())
-    val latestScans: StateFlow<List<ScanRecord>> = _latestScans
+    private val _scanRecord = MutableStateFlow<ScanRecord?>(null)
+    val scanRecord: StateFlow<ScanRecord?> = _scanRecord
 
-    fun fetchLatestScans() {
+    fun fetchScanById(scanId: String) {
         val user = auth.currentUser ?: return
         db.collection("users")
             .document(user.uid)
             .collection("scans")
-            .orderBy("date", com.google.firebase.firestore.Query.Direction.DESCENDING)
-            .limit(5)
+            .document(scanId)
             .get()
             .addOnSuccessListener { result ->
-                val scans = result.mapNotNull { doc ->
-                    doc.toObject(ScanRecord::class.java)?.copy(id = doc.id)
-                }
-                _latestScans.value = scans
+                val scan = result.toObject(ScanRecord::class.java)
+                _scanRecord.value = scan
             }
     }
 }
-

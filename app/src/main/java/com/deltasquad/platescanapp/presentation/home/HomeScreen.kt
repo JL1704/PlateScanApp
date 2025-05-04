@@ -10,6 +10,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.navigation.NavHostController
 import com.deltasquad.platescanapp.presentation.components.*
+import com.deltasquad.platescanapp.presentation.navigation.Screen
 import com.deltasquad.platescanapp.presentation.theme.PlateScanAppTheme
 
 @Composable
@@ -49,7 +50,9 @@ fun HomeScreen(navController: NavHostController, viewModel: HomeViewModel = andr
                 plate = scan.plate,
                 date = scan.date,
                 state = scan.state,
-                onClick = { /* Navegar a detalle si deseas */ }
+                onClick = {
+                    navController.navigate(Screen.Details.createRoute(scan.id))
+                }
             )
         }
     }
