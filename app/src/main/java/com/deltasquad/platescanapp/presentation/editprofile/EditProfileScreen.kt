@@ -88,7 +88,7 @@ fun EditProfileScreen(
         Spacer(modifier = Modifier.height(8.dp))
 
         Button(onClick = { launcher.launch("image/*") }) {
-            Text("Cambiar Imagen")
+            Text("Change Image")
         }
 
         Spacer(modifier = Modifier.height(24.dp))

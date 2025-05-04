@@ -1,13 +1,11 @@
 package com.deltasquad.platescanapp.presentation.home
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.deltasquad.platescanapp.data.model.ScanRecord
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
 
 class HomeViewModel : ViewModel() {
     private val db = FirebaseFirestore.getInstance()

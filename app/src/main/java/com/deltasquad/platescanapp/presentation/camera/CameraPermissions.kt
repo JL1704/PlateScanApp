@@ -27,7 +27,7 @@ fun RequestPermissions(onGranted: @Composable () -> Unit) {
     if (allGranted) {
         onGranted()
     } else {
-        Text("Se requieren permisos de cámara y ubicación para continuar.")
+        Text("Camera and location permissions are required to proceed.")
     }
 }
 

@@ -40,7 +40,7 @@ fun HomeScreen(navController: NavHostController, viewModel: HomeViewModel = andr
         }
 
         item {
-            SectionLabel(text = "Registros Recientes")
+            SectionLabel(text = "Recent Registrations")
         }
 
         items(scans) { scan ->

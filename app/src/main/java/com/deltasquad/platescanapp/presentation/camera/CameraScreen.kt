@@ -65,12 +65,12 @@ fun CameraScreen(viewModel: CameraViewModel = viewModel()) {
                 onClick = {
                     takePhotoAndCrop(context, previewView, viewModel) { uri ->
                         photoUri = uri
-                        Toast.makeText(context, "Foto capturada: $uri", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "Photo captured: $uri", Toast.LENGTH_SHORT).show()
                     }
                 },
                 modifier = Modifier.fillMaxWidth(0.6f)
             ) {
-                Text("Capturar foto")
+                Text("Scan Plate")
             }
         }
     }
@@ -161,13 +161,13 @@ fun takePhotoAndCrop(
                     tempFile.delete()
                 } catch (e: Exception) {
                     Log.e("CameraCapture", "Error al recortar o guardar", e)
-                    Toast.makeText(context, "Error al procesar la imagen", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Error processing the image", Toast.LENGTH_SHORT).show()
                 }
             }
 
             override fun onError(exception: ImageCaptureException) {
                 Log.e("CameraCapture", "Error al capturar foto", exception)
-                Toast.makeText(context, "Error al capturar foto", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Error Capturing Photo", Toast.LENGTH_SHORT).show()
             }
         }
     )
