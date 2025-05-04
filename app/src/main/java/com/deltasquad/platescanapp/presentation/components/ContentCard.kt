@@ -15,15 +15,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import android.net.Uri
 import coil.compose.AsyncImage
 import com.deltasquad.platescanapp.presentation.theme.PlateScanAppTheme
 
 @Composable
 fun ContentCard(
-    imageUrl: String,
-    plateNumber: String,
+    croppedImage: Uri,
+    plate: String,
     date: String,
-    description: String,
+    state: String,
     onClick: () -> Unit
 ) {
     Card(
@@ -39,35 +40,36 @@ fun ContentCard(
             verticalAlignment = Alignment.CenterVertically
         ) {
             AsyncImage(
-                model = imageUrl,
+                model = croppedImage,
                 contentDescription = "Placa del vehículo",
                 modifier = Modifier
                     .size(80.dp)
                     .padding(end = PlateScanAppTheme.dimens.paddingNormal),
-                error = painterResource(com.deltasquad.platescanapp.R.drawable.placeholder), // Imagen de respaldo
-                placeholder = painterResource(com.deltasquad.platescanapp.R.drawable.placeholder) // Imagen mientras carga
+                error = painterResource(com.deltasquad.platescanapp.R.drawable.placeholder),
+                placeholder = painterResource(com.deltasquad.platescanapp.R.drawable.placeholder)
             )
             Column {
                 Text(
-                    text = plateNumber,
+                    text = plate,
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp
                 )
                 Text(text = date, fontSize = 14.sp, color = Color.Gray)
-                Text(text = "Descripción: $description", fontSize = 14.sp)
+                Text(text = "State: $state", fontSize = 14.sp)
             }
         }
     }
 }
 
+
 @Preview(showBackground = true)
 @Composable
 fun ContentCardPreview() {
     ContentCard(
-        imageUrl = "https://taxielegant.com/wp-content/uploads/2023/08/tipos-matriculas-espana.jpg",
-        plateNumber = "8806 KZS",
+        croppedImage = Uri.parse("content://media/external/images/media/1000000072"),
+        plate = "8806 KZS",
         date = "01/02/2025",
-        description = "Esta es una placa",
+        state = "success",
         onClick = {}
     )
 }

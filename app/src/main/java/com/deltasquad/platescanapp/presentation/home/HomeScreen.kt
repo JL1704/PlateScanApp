@@ -1,18 +1,25 @@
 package com.deltasquad.platescanapp.presentation.home
 
+import android.net.Uri
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.navigation.NavHostController
 import com.deltasquad.platescanapp.presentation.components.*
 import com.deltasquad.platescanapp.presentation.theme.PlateScanAppTheme
 
 @Composable
-fun HomeScreen(navController: NavHostController) {
+fun HomeScreen(navController: NavHostController, viewModel: HomeViewModel = androidx.lifecycle.viewmodel.compose.viewModel()) {
+    val scans by viewModel.latestScans.collectAsState()
     var query by remember { mutableStateOf("") }
+
+    LaunchedEffect(Unit) {
+        viewModel.fetchLatestScans()
+    }
 
     LazyColumn(
         modifier = Modifier
@@ -36,15 +43,18 @@ fun HomeScreen(navController: NavHostController) {
             SectionLabel(text = "Registros Recientes")
         }
 
-        item {
-            ContentCardGroup(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp)
+        items(scans) { scan ->
+            ContentCard(
+                croppedImage = Uri.parse(scan.croppedImage),
+                plate = scan.plate,
+                date = scan.date,
+                state = scan.state,
+                onClick = { /* Navegar a detalle si deseas */ }
             )
         }
     }
 }
+
 
 
 @Preview(
