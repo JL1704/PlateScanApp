@@ -154,6 +154,10 @@ fun takePhotoAndCrop(
                     viewModel.onPhotoCaptured(originalUri!!)
                     onPhotoCaptured(croppedUri!!)
 
+                    // Guardar en Firestore 🔥
+                    viewModel.saveScanRecord(originalUri, croppedUri)
+                    //viewModel.saveScanRecordWithoutLocation(originalUri, croppedUri)
+
                     tempFile.delete()
                 } catch (e: Exception) {
                     Log.e("CameraCapture", "Error al recortar o guardar", e)
@@ -192,10 +196,11 @@ fun saveBitmapToGallery(context: Context, bitmap: Bitmap, name: String): Uri? {
 
 @Composable
 fun CameraScreenEntryPoint() {
-    RequestCameraPermission {
+    RequestPermissions {
         CameraScreen()
     }
 }
+
 
 @Composable
 fun ScanFrame(

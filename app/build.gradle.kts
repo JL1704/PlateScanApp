@@ -79,5 +79,5 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation(libs.coil.compose)
     implementation(libs.androidx.material)
-
+    implementation(libs.play.services.location)
 }

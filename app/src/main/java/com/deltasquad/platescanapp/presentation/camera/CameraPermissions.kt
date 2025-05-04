@@ -6,22 +6,30 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
-import com.google.accompanist.permissions.rememberPermissionState
+import com.google.accompanist.permissions.*
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun RequestCameraPermission(onGranted: @Composable () -> Unit) {
-    val permissionState = rememberPermissionState(permission = Manifest.permission.CAMERA)
+fun RequestPermissions(onGranted: @Composable () -> Unit) {
+    val permissionsState = rememberMultiplePermissionsState(
+        permissions = listOf(
+            Manifest.permission.CAMERA,
+            Manifest.permission.ACCESS_FINE_LOCATION
+        )
+    )
 
     LaunchedEffect(Unit) {
-        permissionState.launchPermissionRequest()
+        permissionsState.launchMultiplePermissionRequest()
     }
 
-    if (permissionState.status.isGranted) {
+    val allGranted = permissionsState.permissions.all { it.status.isGranted }
+
+    if (allGranted) {
         onGranted()
     } else {
-        Text("Se requiere permiso de cámara para continuar.")
+        Text("Se requieren permisos de cámara y ubicación para continuar.")
     }
 }
+
 
 
