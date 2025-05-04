@@ -14,11 +14,12 @@ import com.deltasquad.platescanapp.presentation.theme.primaryGreen
 import com.deltasquad.platescanapp.presentation.theme.primaryWhite
 
 @Composable
-fun SectionLabel(text: String) {
+fun SectionLabel(text: String, modifier: Modifier = Modifier) {
+
     Box(
-        modifier = Modifier
+        modifier = modifier
             .padding(horizontal = PlateScanAppTheme.dimens.paddingMedium, vertical = PlateScanAppTheme.dimens.paddingNormal)
-            .background(primaryGreen, shape = RoundedCornerShape(PlateScanAppTheme.dimens.roundedShapeMedium)) // Verde con bordes redondeados
+            .background(primaryGreen, shape = RoundedCornerShape(PlateScanAppTheme.dimens.roundedShapeMedium))
             .padding(horizontal = PlateScanAppTheme.dimens.paddingMedium, vertical = PlateScanAppTheme.dimens.paddingNormal)
     ) {
         Text(

@@ -95,7 +95,7 @@ fun NavigationWrapper(
                     }
                 )
             }
-            composable(Screen.Records.route) { RecordsScreen() }
+            composable(Screen.Records.route) { RecordsScreen(navController) }
             composable(Screen.Reports.route) { ReportsScreen() }
             composable(Screen.Stats.route) { StatsScreen() }
 
