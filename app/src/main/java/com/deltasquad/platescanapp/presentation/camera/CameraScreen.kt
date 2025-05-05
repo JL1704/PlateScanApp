@@ -29,7 +29,12 @@ import android.graphics.Matrix
 import android.view.Surface
 import android.view.WindowManager
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
+import com.deltasquad.platescanapp.presentation.theme.primaryGreen
+import com.deltasquad.platescanapp.presentation.theme.secondaryGreen
 
 @Composable
 fun CameraScreen(viewModel: CameraViewModel = viewModel()) {
@@ -68,9 +73,10 @@ fun CameraScreen(viewModel: CameraViewModel = viewModel()) {
                         Toast.makeText(context, "Photo captured: $uri", Toast.LENGTH_SHORT).show()
                     }
                 },
-                modifier = Modifier.fillMaxWidth(0.6f)
+                modifier = Modifier.fillMaxWidth(0.6f),
+                colors = ButtonDefaults.buttonColors(Color.Cyan)
             ) {
-                Text("Scan Plate")
+                Text("Scan Plate", color = Color.Black, fontWeight = FontWeight.Bold)
             }
         }
     }
