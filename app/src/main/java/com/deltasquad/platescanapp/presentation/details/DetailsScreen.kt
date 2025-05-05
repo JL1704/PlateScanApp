@@ -19,6 +19,7 @@ import com.deltasquad.platescanapp.presentation.components.ImageSection
 import com.deltasquad.platescanapp.presentation.components.ScanDataSection
 import com.deltasquad.platescanapp.presentation.components.SectionLabel
 import com.deltasquad.platescanapp.presentation.components.VehicleDataSection
+import com.deltasquad.platescanapp.presentation.navigation.Screen
 import com.deltasquad.platescanapp.presentation.theme.primaryGreen
 
 @Composable
@@ -98,14 +99,26 @@ fun DetailsScreen(
                         horizontalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
                         Button(
-                            onClick = { /* Acción de Editar */ },
+                            onClick = {
+                                navController.navigate(Screen.EditData.createRoute(scanId))
+                            },
                             modifier = Modifier.weight(1f),
                             colors = ButtonDefaults.buttonColors(containerColor = primaryGreen)
                         ) {
                             Text("Edit", color = Color.White, fontWeight = FontWeight.Bold)
                         }
                         Button(
-                            onClick = { /* Acción de Eliminar */ },
+                            onClick = {
+                                viewModel.deleteScanById(
+                                    scanId = scanId,
+                                    onSuccess = {
+                                        navController.popBackStack() // Navega hacia atrás al eliminar exitosamente
+                                    },
+                                    onFailure = {
+                                        // Puedes mostrar un Snackbar o Toast aquí si quieres informar del error
+                                    }
+                                )
+                            },
                             modifier = Modifier.weight(1f),
                             colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
                         ) {

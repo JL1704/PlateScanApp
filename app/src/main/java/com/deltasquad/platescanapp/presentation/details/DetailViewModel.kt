@@ -26,4 +26,37 @@ class DetailViewModel : ViewModel() {
                 _scanRecord.value = scan
             }
     }
+
+    fun deleteScanById(scanId: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+        val user = auth.currentUser ?: return
+        db.collection("users")
+            .document(user.uid)
+            .collection("scans")
+            .document(scanId)
+            .delete()
+            .addOnSuccessListener {
+                onSuccess()
+            }
+            .addOnFailureListener { exception ->
+                onFailure(exception)
+            }
+    }
+
+    fun updateScanData(
+        scanId: String,
+        updatedData: Map<String, Any>,
+        onSuccess: () -> Unit,
+        onFailure: (Exception) -> Unit
+    ) {
+        val user = auth.currentUser ?: return
+        db.collection("users")
+            .document(user.uid)
+            .collection("scans")
+            .document(scanId)
+            .update(updatedData)
+            .addOnSuccessListener { onSuccess() }
+            .addOnFailureListener { onFailure(it) }
+    }
+
+
 }

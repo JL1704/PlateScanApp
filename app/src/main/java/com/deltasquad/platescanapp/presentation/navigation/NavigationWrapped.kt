@@ -14,6 +14,7 @@ import com.deltasquad.platescanapp.presentation.camera.CameraScreenEntryPoint
 import com.deltasquad.platescanapp.presentation.components.BottomNavigationView
 import com.deltasquad.platescanapp.presentation.components.PSTopAppBar
 import com.deltasquad.platescanapp.presentation.details.DetailsScreen
+import com.deltasquad.platescanapp.presentation.editdata.EditDataScreen
 import com.deltasquad.platescanapp.presentation.editprofile.EditProfileScreen
 import com.deltasquad.platescanapp.presentation.home.HomeScreen
 import com.deltasquad.platescanapp.presentation.profile.ProfileScreen
@@ -104,6 +105,12 @@ fun NavigationWrapper(
                 val scanId = backStackEntry.arguments?.getString("scanId") ?: ""
                 DetailsScreen(scanId = scanId, navController)
             }
+
+            composable(Screen.EditData.route) { backStackEntry ->
+                val scanId = backStackEntry.arguments?.getString("scanId") ?: ""
+                EditDataScreen(scanId = scanId, navController = navController)
+            }
+
 
         }
     }
