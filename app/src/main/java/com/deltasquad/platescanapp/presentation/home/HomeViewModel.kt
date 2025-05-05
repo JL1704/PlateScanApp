@@ -14,6 +14,12 @@ class HomeViewModel : ViewModel() {
     private val _latestScans = MutableStateFlow<List<ScanRecord>>(emptyList())
     val latestScans: StateFlow<List<ScanRecord>> = _latestScans
 
+    private val _filteredScans = MutableStateFlow<List<ScanRecord>>(emptyList())
+    val filteredScans: StateFlow<List<ScanRecord>> = _filteredScans
+
+    // Guarda todas las placas para filtrado
+    private var allScans: List<ScanRecord> = emptyList()
+
     fun fetchLatestScans() {
         val user = auth.currentUser ?: return
         db.collection("users")
@@ -29,5 +35,32 @@ class HomeViewModel : ViewModel() {
                 _latestScans.value = scans
             }
     }
+
+    fun fetchAllScans() {
+        val user = auth.currentUser ?: return
+        db.collection("users")
+            .document(user.uid)
+            .collection("scans")
+            .orderBy("date", com.google.firebase.firestore.Query.Direction.DESCENDING)
+            .get()
+            .addOnSuccessListener { result ->
+                val scans = result.mapNotNull { doc ->
+                    doc.toObject(ScanRecord::class.java)?.copy(id = doc.id)
+                }
+                allScans = scans
+                _filteredScans.value = scans // Inicialmente sin filtro
+            }
+    }
+
+    fun filterScans(query: String) {
+        _filteredScans.value = if (query.isBlank()) {
+            emptyList()
+        } else {
+            allScans.filter {
+                it.plate.contains(query, ignoreCase = true)
+            }
+        }
+    }
+
 }
 

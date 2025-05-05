@@ -15,11 +15,14 @@ import com.deltasquad.platescanapp.presentation.theme.PlateScanAppTheme
 
 @Composable
 fun HomeScreen(navController: NavHostController, viewModel: HomeViewModel = androidx.lifecycle.viewmodel.compose.viewModel()) {
-    val scans by viewModel.latestScans.collectAsState()
+
+    val latestScans by viewModel.latestScans.collectAsState()
+    val filteredScans by viewModel.filteredScans.collectAsState()
     var query by remember { mutableStateOf("") }
 
     LaunchedEffect(Unit) {
         viewModel.fetchLatestScans()
+        viewModel.fetchAllScans()
     }
 
     LazyColumn(
@@ -32,7 +35,10 @@ fun HomeScreen(navController: NavHostController, viewModel: HomeViewModel = andr
         item {
             SearchBar(
                 query = query,
-                onQueryChanged = { query = it }
+                onQueryChanged = {
+                    query = it
+                    viewModel.filterScans(query)
+                }
             )
         }
 
@@ -40,21 +46,34 @@ fun HomeScreen(navController: NavHostController, viewModel: HomeViewModel = andr
             ButtonGroup(navController = navController)
         }
 
-        item {
-            SectionLabel(text = "Recent Registrations")
+        if (query.isBlank()) {
+            item { SectionLabel(text = "Recent Registrations") }
+            items(latestScans) { scan ->
+                ContentCard(
+                    croppedImage = Uri.parse(scan.croppedImage),
+                    plate = scan.plate,
+                    date = scan.date,
+                    state = scan.state,
+                    onClick = {
+                        navController.navigate(Screen.Details.createRoute(scan.id))
+                    }
+                )
+            }
+        } else {
+            item { SectionLabel(text = "Search Results") }
+            items(filteredScans) { scan ->
+                ContentCard(
+                    croppedImage = Uri.parse(scan.croppedImage),
+                    plate = scan.plate,
+                    date = scan.date,
+                    state = scan.state,
+                    onClick = {
+                        navController.navigate(Screen.Details.createRoute(scan.id))
+                    }
+                )
+            }
         }
 
-        items(scans) { scan ->
-            ContentCard(
-                croppedImage = Uri.parse(scan.croppedImage),
-                plate = scan.plate,
-                date = scan.date,
-                state = scan.state,
-                onClick = {
-                    navController.navigate(Screen.Details.createRoute(scan.id))
-                }
-            )
-        }
     }
 }
 
