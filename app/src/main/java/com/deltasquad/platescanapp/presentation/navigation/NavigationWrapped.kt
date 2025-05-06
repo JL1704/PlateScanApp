@@ -34,7 +34,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
 import coil.compose.AsyncImage
+import com.deltasquad.platescanapp.presentation.reports.CreateReportScreen
 import kotlinx.coroutines.launch
 
 @Composable
@@ -62,14 +65,6 @@ fun NavigationWrapper(
     // Envuelve Scaffold con ModalNavigationDrawer
     ModalNavigationDrawer(
         drawerState = drawerState,
-        /*drawerContent = {
-            // Aquí defines el contenido del menú lateral
-            ModalDrawerSheet {
-                Text("Menú", modifier = Modifier.padding(16.dp))
-
-                // Agrega más ítems si lo necesitas
-            }
-        }*/
         drawerContent = {
             ModalDrawerSheet {
                 Text("Menu", fontSize = 18.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(32.dp))
@@ -164,6 +159,24 @@ fun NavigationWrapper(
                     val scanId = backStackEntry.arguments?.getString("scanId") ?: ""
                     EditDataScreen(scanId = scanId, navController = navController)
                 }
+                /*composable(
+                    route = Screen.CreateReport.route,
+                    arguments = listOf(
+                        navArgument("plate") { type = NavType.StringType },
+                        navArgument("scanRecordId") { type = NavType.StringType }
+                    )
+                ) { backStackEntry ->
+                    val plate = backStackEntry.arguments?.getString("plate") ?: ""
+                    val scanRecordId = backStackEntry.arguments?.getString("scanRecordId") ?: ""
+                    CreateReportScreen(navController, plate, scanRecordId)
+                }
+
+                 */
+                composable(Screen.CreateReport.route) {
+                    CreateReportScreen(navController)
+                }
+
+
             }
         }
     }

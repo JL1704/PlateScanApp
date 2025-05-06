@@ -13,7 +13,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.deltasquad.platescanapp.R
 import com.deltasquad.platescanapp.presentation.components.*
@@ -24,22 +23,32 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavHostController
-import com.deltasquad.platescanapp.data.model.PlateReport
+import com.deltasquad.platescanapp.presentation.navigation.Screen
 import com.deltasquad.platescanapp.presentation.theme.*
 
 @Composable
 fun ReportsScreen(
     navController: NavHostController,
+    viewModel: ReportsViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
 ) {
+    val reports by viewModel.allReports.collectAsState()
+
+    LaunchedEffect(Unit) {
+        viewModel.fetchAllReports()
+    }
+
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = 16.dp)
         ) {
-            // Encabezado manual
+            // Encabezado
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -61,7 +70,8 @@ fun ReportsScreen(
                     text = "Reports",
                     modifier = Modifier
                         .align(Alignment.CenterVertically)
-                        .padding(end = 44.dp))
+                        .padding(end = 44.dp)
+                )
                 Spacer(modifier = Modifier.weight(1f))
             }
 
@@ -71,18 +81,16 @@ fun ReportsScreen(
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(bottom = 72.dp), // espacio para FAB
+                    .padding(bottom = 80.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
                 contentPadding = PaddingValues(vertical = 16.dp)
             ) {
-                items(4) {
+                items(reports.size) { index ->
                     ReportCard(
-                        report = PlateReport(
-                            plate = "AAA-000-A",
-                            reportType = "Accidente",
-                            description = "El auto con esta placa se accidentó."
-                        ),
-                        onClick = {}
+                        report = reports[index],
+                        onClick = {
+                            // Aquí puedes navegar al detalle o editar
+                        }
                     )
                 }
             }
@@ -90,14 +98,16 @@ fun ReportsScreen(
 
         // FAB flotante
         FloatingActionButton(
-            onClick = {  },
+            onClick = {
+                navController.navigate(Screen.CreateReport.route)
+            },
             shape = CircleShape,
             containerColor = primaryGreen,
             contentColor = MaterialTheme.colorScheme.onPrimary,
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(16.dp)
-                .padding(bottom = 32.dp, end = 32.dp)
+                .padding(bottom = 24.dp, end = 24.dp)
         ) {
             Icon(
                 imageVector = Icons.Filled.Add,

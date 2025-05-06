@@ -15,6 +15,11 @@ sealed class Screen(val route: String) {
     object EditData : Screen("edit_data/{scanId}") {
         fun createRoute(scanId: String) = "edit_data/$scanId"
     }
+    object CreateReport : Screen("create_report")
+
+    /*object CreateReport : Screen("create_report/{plate}/{scanRecordId}") {
+        fun createRoute(plate: String, scanRecordId: String) = "create_report/$plate/$scanRecordId"
+    }*/
 }
 
 
