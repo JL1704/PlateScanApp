@@ -29,6 +29,14 @@ class CreateReportViewModel : ViewModel() {
     var description = mutableStateOf("")
     var isSaving = mutableStateOf(false)
 
+    var evidenceImagePath = mutableStateOf<String?>(null)
+        private set
+
+    fun setEvidenceImagePath(path: String) {
+        evidenceImagePath.value = path
+    }
+
+
     fun onPlateSelected(plate: String, scanId: String) {
         selectedPlate.value = plate
         selectedScanId.value = scanId
@@ -63,7 +71,8 @@ class CreateReportViewModel : ViewModel() {
             description = description.value,
             dateReported = currentDate,
             reporterId = user.uid,
-            reporterName = user.displayName ?: ""
+            reporterName = user.displayName ?: "",
+            imageEvidence = evidenceImagePath.value.orEmpty() // ruta local
         )
 
         isSaving.value = true

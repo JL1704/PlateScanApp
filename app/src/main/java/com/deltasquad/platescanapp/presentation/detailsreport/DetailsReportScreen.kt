@@ -73,13 +73,13 @@ fun DetailsReportScreen(
                 elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
-                    InfoRow(label = "Placa", value = report!!.plate)
-                    InfoRow(label = "Tipo", value = report!!.reportType)
-                    InfoRow(label = "Descripción", value = report!!.description)
-                    InfoRow(label = "Fecha", value = report!!.dateReported)
-                    InfoRow(label = "Ubicación", value = report!!.locationReported)
-                    InfoRow(label = "Estado", value = report!!.status)
-                    InfoRow(label = "Reportado por", value = report!!.reporterName)
+                    InfoRow(label = "Plate", value = report!!.plate)
+                    InfoRow(label = "Report Type", value = report!!.reportType)
+                    InfoRow(label = "Description", value = report!!.description)
+                    InfoRow(label = "Date", value = report!!.dateReported)
+                    InfoRow(label = "Location", value = report!!.locationReported)
+                    InfoRow(label = "State", value = report!!.status)
+                    //InfoRow(label = "Reportado por", value = report!!.reporterName)
                 }
             }
 
@@ -87,7 +87,7 @@ fun DetailsReportScreen(
 
             if (report!!.imageEvidence.isNotBlank()) {
                 Text(
-                    text = "Evidencia Fotográfica",
+                    text = "Photographic Evidence",
                     style = MaterialTheme.typography.titleMedium
                 )
                 Spacer(modifier = Modifier.height(8.dp))

@@ -32,6 +32,17 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.deltasquad.platescanapp.R
 import com.deltasquad.platescanapp.presentation.components.SectionLabel
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.platform.LocalContext
+import androidx.core.net.toFile
+import coil.compose.rememberAsyncImagePainter
+import java.io.File
+import java.io.FileOutputStream
+import java.io.InputStream
 
 @Composable
 fun CreateReportScreen(
@@ -61,6 +72,28 @@ fun CreateReportScreen(
     )
 
     var reportTypeExpanded by remember { mutableStateOf(false) }
+
+    val context = LocalContext.current
+    var imageUri by remember { mutableStateOf<Uri?>(null) }
+
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        uri?.let {
+            imageUri = it
+            // Guardar imagen localmente
+            val inputStream: InputStream? = context.contentResolver.openInputStream(it)
+            val file = File(context.filesDir, "evidence_${System.currentTimeMillis()}.jpg")
+            inputStream?.use { input ->
+                FileOutputStream(file).use { output ->
+                    input.copyTo(output)
+                }
+            }
+            // Guardar ruta en el ViewModel
+            viewModel.setEvidenceImagePath(file.absolutePath)
+        }
+    }
+
 
     LaunchedEffect(Unit) {
         viewModel.fetchUserPlates()
@@ -170,6 +203,26 @@ fun CreateReportScreen(
                 .fillMaxWidth()
                 .height(120.dp)
         )
+
+        // Botón para seleccionar imagen
+        Button(
+            onClick = { launcher.launch("image/*") },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Attach Image Evidence")
+        }
+
+        // Muestra previa de la imagen seleccionada
+        imageUri?.let {
+            Image(
+                painter = rememberAsyncImagePainter(it),
+                contentDescription = "Selected Image",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(180.dp)
+            )
+        }
+
 
         Button(
             onClick = {

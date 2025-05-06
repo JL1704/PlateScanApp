@@ -28,7 +28,7 @@ fun ButtonGroup(navController: NavHostController) {
         )
         NavigationButton(
             text = "Stats",
-            iconRes = R.drawable.ic_other,
+            iconRes = R.drawable.ic_stats,
             onClick = { navController.navigate(Screen.Stats.route) }
         )
     }
