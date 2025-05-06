@@ -152,7 +152,7 @@ fun NavigationWrapper(
                     )
                 }
                 composable(Screen.Records.route) { RecordsScreen(navController) }
-                composable(Screen.Reports.route) { ReportsScreen() }
+                composable(Screen.Reports.route) { ReportsScreen(navController) }
                 composable(Screen.Stats.route) { StatsScreen() }
 
                 composable("details/{scanId}") { backStackEntry ->

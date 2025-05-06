@@ -17,7 +17,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.deltasquad.platescanapp.R
 import com.deltasquad.platescanapp.presentation.components.*
-import com.deltasquad.platescanapp.presentation.theme.PlateScanAppTheme
 import androidx.compose.material3.Icon
 import androidx.compose.ui.res.painterResource
 import androidx.compose.material3.FloatingActionButton
@@ -25,85 +24,86 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.ui.graphics.Color
+import androidx.navigation.NavHostController
+import com.deltasquad.platescanapp.data.model.PlateReport
 import com.deltasquad.platescanapp.presentation.theme.*
 
 @Composable
 fun ReportsScreen(
-    onBackClick: () -> Unit = {},
-    onCreateReportClick: () -> Unit = {}
+    navController: NavHostController,
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp)
-    ) {
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
+    Box(modifier = Modifier.fillMaxSize()) {
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .clickable { onBackClick() }
+                .fillMaxSize()
+                .padding(horizontal = 16.dp)
         ) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_back_24),
-                contentDescription = "Volver"
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            Box(modifier = Modifier.fillMaxWidth()) {
+            // Encabezado manual
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 16.dp, bottom = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_back_24),
+                    contentDescription = "Back",
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier
+                        .size(28.dp)
+                        .clickable {
+                            navController.popBackStack()
+                        }
+                )
+                Spacer(modifier = Modifier.weight(1f))
                 SectionLabel(
-                    text = "Reportes",
-                    modifier = Modifier.align(Alignment.Center)
-                )
+                    text = "Reports",
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically)
+                        .padding(end = 44.dp))
+                Spacer(modifier = Modifier.weight(1f))
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Lista de reportes
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(bottom = 72.dp), // espacio para FAB
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                contentPadding = PaddingValues(vertical = 16.dp)
+            ) {
+                items(4) {
+                    ReportCard(
+                        report = PlateReport(
+                            plate = "AAA-000-A",
+                            reportType = "Accidente",
+                            description = "El auto con esta placa se accidentó."
+                        ),
+                        onClick = {}
+                    )
+                }
             }
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Lista de reportes
-        LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(30.dp),
-            contentPadding = PaddingValues(bottom = 80.dp)
-        ) {
-            items(4) {
-                ReportCard(
-                    report = Report(
-                        plate = "AAA-000-A",
-                        type = "Accidente",
-                        description = "El auto con esta placa se accidentó."
-                    ),
-                    onClick = {}
-                )
-            }
-        }
-    }
-
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        contentAlignment = Alignment.BottomEnd
-    ) {
+        // FAB flotante
         FloatingActionButton(
-            onClick = { onCreateReportClick() },
+            onClick = {  },
             shape = CircleShape,
             containerColor = primaryGreen,
-            contentColor = MaterialTheme.colorScheme.onPrimary
+            contentColor = MaterialTheme.colorScheme.onPrimary,
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(16.dp)
+                .padding(bottom = 32.dp, end = 32.dp)
         ) {
             Icon(
                 imageVector = Icons.Filled.Add,
-                contentDescription = "Crear reporte"
+                contentDescription = "Crear reporte",
+                tint = Color.White
             )
         }
-
     }
 }
-
-@Preview(showBackground = true)
-@Composable
-fun ReportsPreview() {
-    PlateScanAppTheme {
-        ReportsScreen()
-    }
-}
-

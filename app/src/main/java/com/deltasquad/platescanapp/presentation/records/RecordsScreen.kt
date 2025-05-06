@@ -104,7 +104,6 @@ fun RecordsScreen(navController: NavHostController, viewModel: RecordsViewModel 
         }
 
         if (query.isBlank()) {
-            item { SectionLabel(text = "All Records") }
             items(allScans) { scan ->
                 ContentCard(
                     croppedImage = Uri.parse(scan.croppedImage),
