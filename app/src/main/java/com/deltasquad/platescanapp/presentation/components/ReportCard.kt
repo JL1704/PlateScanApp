@@ -12,7 +12,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-
+import androidx.compose.ui.text.style.TextAlign
 
 data class Report(
     val plate: String,
@@ -35,7 +35,7 @@ fun ReportCard(
         Column(modifier = Modifier.padding(16.dp)) {
             Text(text = "Placa: ${report.plate}", fontWeight = FontWeight.Bold)
             Text(text = "Tipo de reporte: ${report.type}", color = Color.Gray)
-            Text(text = "Descripción: ${report.description}")
+            Text(text = "Descripción: ${report.description}", textAlign = TextAlign.Justify, modifier = Modifier.fillMaxWidth())
         }
     }
 }

@@ -25,6 +25,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
+import com.deltasquad.platescanapp.presentation.theme.*
 
 @Composable
 fun ReportsScreen(
@@ -49,14 +50,19 @@ fun ReportsScreen(
                 contentDescription = "Volver"
             )
             Spacer(modifier = Modifier.width(8.dp))
-            SectionLabel(text = "Reportes")
+            Box(modifier = Modifier.fillMaxWidth()) {
+                SectionLabel(
+                    text = "Reportes",
+                    modifier = Modifier.align(Alignment.Center)
+                )
+            }
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
         // Lista de reportes
         LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(30.dp),
             contentPadding = PaddingValues(bottom = 80.dp)
         ) {
             items(4) {
@@ -81,7 +87,7 @@ fun ReportsScreen(
         FloatingActionButton(
             onClick = { onCreateReportClick() },
             shape = CircleShape,
-            containerColor = MaterialTheme.colorScheme.primary,
+            containerColor = primaryGreen,
             contentColor = MaterialTheme.colorScheme.onPrimary
         ) {
             Icon(
