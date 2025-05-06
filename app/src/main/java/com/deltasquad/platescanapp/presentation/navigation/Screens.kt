@@ -1,6 +1,5 @@
 package com.deltasquad.platescanapp.presentation.navigation
 
-// com.deltasquad.platescanapp.presentation.navigation.Screens.kt
 sealed class Screen(val route: String) {
     object Home : Screen("home")
     object Camera : Screen("camera")
@@ -16,10 +15,10 @@ sealed class Screen(val route: String) {
         fun createRoute(scanId: String) = "edit_data/$scanId"
     }
     object CreateReport : Screen("create_report")
+    object DetailsReport : Screen("details_report/{reportId}") {
+        fun createRoute(reportId: String) = "details_report/$reportId"
+    }
 
-    /*object CreateReport : Screen("create_report/{plate}/{scanRecordId}") {
-        fun createRoute(plate: String, scanRecordId: String) = "create_report/$plate/$scanRecordId"
-    }*/
 }
 
 

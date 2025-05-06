@@ -89,7 +89,7 @@ fun ReportsScreen(
                     ReportCard(
                         report = reports[index],
                         onClick = {
-                            // Aquí puedes navegar al detalle o editar
+                            navController.navigate(Screen.DetailsReport.createRoute(reports[index].id))
                         }
                     )
                 }

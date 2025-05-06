@@ -29,6 +29,7 @@ import com.deltasquad.platescanapp.presentation.reports.ReportsScreen
 import com.deltasquad.platescanapp.presentation.stats.StatsScreen
 import com.google.firebase.auth.FirebaseAuth
 import androidx.compose.material3.*
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.font.FontWeight
@@ -37,7 +38,9 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import coil.compose.AsyncImage
+import com.deltasquad.platescanapp.presentation.detailsreport.DetailsReportScreen
 import com.deltasquad.platescanapp.presentation.reports.CreateReportScreen
+import com.deltasquad.platescanapp.presentation.reports.ReportsViewModel
 import kotlinx.coroutines.launch
 
 @Composable
@@ -159,23 +162,16 @@ fun NavigationWrapper(
                     val scanId = backStackEntry.arguments?.getString("scanId") ?: ""
                     EditDataScreen(scanId = scanId, navController = navController)
                 }
-                /*composable(
-                    route = Screen.CreateReport.route,
-                    arguments = listOf(
-                        navArgument("plate") { type = NavType.StringType },
-                        navArgument("scanRecordId") { type = NavType.StringType }
-                    )
-                ) { backStackEntry ->
-                    val plate = backStackEntry.arguments?.getString("plate") ?: ""
-                    val scanRecordId = backStackEntry.arguments?.getString("scanRecordId") ?: ""
-                    CreateReportScreen(navController, plate, scanRecordId)
-                }
-
-                 */
                 composable(Screen.CreateReport.route) {
                     CreateReportScreen(navController)
                 }
-
+                composable(
+                    route = Screen.DetailsReport.route,
+                    arguments = listOf(navArgument("reportId") { type = NavType.StringType })
+                ) { backStackEntry ->
+                    val reportId = backStackEntry.arguments?.getString("reportId") ?: return@composable
+                    DetailsReportScreen(reportId = reportId, navController = navController)
+                }
 
             }
         }
