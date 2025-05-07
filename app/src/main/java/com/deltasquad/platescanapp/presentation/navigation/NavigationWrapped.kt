@@ -151,7 +151,10 @@ fun NavigationWrapper(
                 }
                 composable(Screen.Records.route) { RecordsScreen(navController) }
                 composable(Screen.Reports.route) { ReportsScreen(navController) }
-                composable(Screen.Stats.route) { StatsScreen() }
+                composable(Screen.Stats.route) {
+                    val userId = FirebaseAuth.getInstance().currentUser?.uid.orEmpty()
+                    StatsScreen(navController = navController, userId = userId)
+                }
 
                 composable("details/{scanId}") { backStackEntry ->
                     val scanId = backStackEntry.arguments?.getString("scanId") ?: ""

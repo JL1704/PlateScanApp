@@ -80,4 +80,8 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.androidx.material)
     implementation(libs.play.services.location)
+    //implementation(libs.compose.charts)
+    implementation ("io.github.ehsannarmani:compose-charts:0.1.7")
+
+
 }
