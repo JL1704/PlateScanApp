@@ -161,7 +161,9 @@ fun takePhotoAndCrop(
                     onPhotoCaptured(croppedUri!!)
 
                     // Guardar en Firestore 🔥
-                    viewModel.saveScanRecord(originalUri, croppedUri)
+                    viewModel.sendCroppedImageToServer(context, originalUri, croppedUri)
+                    //viewModel.saveScanRecord(originalUri, croppedUri)
+                    //viewModel.sendCroppedImageToServer(context, croppedUri)
                     //viewModel.saveScanRecordWithoutLocation(originalUri, croppedUri)
 
                     tempFile.delete()

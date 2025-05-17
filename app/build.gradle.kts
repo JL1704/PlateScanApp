@@ -81,5 +81,8 @@ dependencies {
     implementation(libs.androidx.material)
     implementation(libs.play.services.location)
     implementation(libs.mpandroidchart)
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.gson)
+    implementation(libs.okhttp)
 
 }
