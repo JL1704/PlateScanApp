@@ -3,6 +3,8 @@ package com.deltasquad.platescanapp.presentation.camera
 import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.location.Location
 import android.net.Uri
 import android.util.Log
@@ -10,7 +12,6 @@ import android.widget.Toast
 import androidx.camera.core.ImageCapture
 import androidx.lifecycle.AndroidViewModel
 import com.deltasquad.platescanapp.data.api.RetrofitClient
-import com.deltasquad.platescanapp.data.api.RetrofitClient.api
 import com.deltasquad.platescanapp.data.model.ScanRecord
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -66,21 +67,20 @@ class CameraViewModel(application: Application) : AndroidViewModel(application) 
                 .add(scanData)
                 .addOnSuccessListener {
                     Log.d("Firestore", "Scan guardado exitosamente")
-                    Toast.makeText(getApplication(), "Scan guardado en Firestore", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        getApplication(),
+                        "✅ Scan guardado en Firestore",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
                 .addOnFailureListener {
                     Log.e("Firestore", "Error al guardar el escaneo", it)
-                    Toast.makeText(getApplication(), "Error al guardar en Firestore: ${it.message}", Toast.LENGTH_LONG).show()
+                    Toast.makeText(
+                        getApplication(),
+                        "❌ Error al guardar en Firestore: ${it.message}",
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
-/*
-                .addOnSuccessListener {
-                    Log.d("Firestore", "Scan guardado exitosamente")
-                }
-                .addOnFailureListener {
-                    Log.e("Firestore", "Error al guardar el escaneo", it)
-                }
-
- */
         }
     }
 
@@ -91,38 +91,52 @@ class CameraViewModel(application: Application) : AndroidViewModel(application) 
 
             try {
                 withContext(Dispatchers.Main) {
-                    Toast.makeText(context, "📤 Enviando imagen al servidor...", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "📤 Enviando imagen redimensionada al servidor...", Toast.LENGTH_SHORT).show()
                 }
 
-                // Verifica si la imagen se abre correctamente
+                // 1. Leer Bitmap desde el URI
                 val inputStream = contentResolver.openInputStream(originalUri)
-                if (inputStream == null) {
+                val originalBitmap = BitmapFactory.decodeStream(inputStream)
+                inputStream?.close()
+
+                if (originalBitmap == null) {
                     withContext(Dispatchers.Main) {
-                        Toast.makeText(context, "❌ No se pudo abrir el InputStream para la imagen.", Toast.LENGTH_LONG).show()
+                        Toast.makeText(context, "❌ No se pudo leer la imagen", Toast.LENGTH_LONG).show()
                     }
                     return@launch
                 }
 
-                // Crear un archivo temporal para enviar la imagen
-                tempFile = File.createTempFile("upload_", ".jpg", context.cacheDir)
-                inputStream.use { input -> tempFile.outputStream().use { output -> input.copyTo(output) } }
+                // 2. Redimensionar a 640x640
+                val resizedBitmap = Bitmap.createScaledBitmap(originalBitmap, 640, 640, true)
 
+                // 3. Guardar el Bitmap redimensionado en un archivo temporal
+                tempFile = File.createTempFile("resized_", ".jpg", context.cacheDir)
+                val outputStream = tempFile.outputStream()
+                resizedBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+                outputStream.flush()
+                outputStream.close()
+
+                // 4. Preparar MultipartBody para Retrofit
                 val requestFile = tempFile.asRequestBody("image/jpeg".toMediaTypeOrNull())
                 val body = MultipartBody.Part.createFormData("image", tempFile.name, requestFile)
 
+                // 5. Enviar imagen al servidor
                 val response = RetrofitClient.api.detectPlate(body)
 
                 if (response.isSuccessful) {
                     val result = response.body()
-                    val plate = result?.plate ?: "Desconocida"
+                    val box = result?.box ?: emptyList()
                     val success = result?.success ?: false
 
                     withContext(Dispatchers.Main) {
-                        Toast.makeText(context, "Placa detectada: $plate", Toast.LENGTH_LONG).show()
+                        Toast.makeText(context, "✅ Placa detectada: ${if (success) "Sí" else "No"}", Toast.LENGTH_SHORT).show()
                     }
 
-                    // Guardar en Firestore con datos reales
-                    saveScanRecord(originalUri, croppedUri, plate, success)
+                    Log.d("ServerResponse", "Box: $box")
+
+                    // Guardar en Firestore
+                    saveScanRecord(originalUri, croppedUri, plate = "Desconocida", success = success)
+
                 } else {
                     val errorMsg = response.errorBody()?.string()
                     withContext(Dispatchers.Main) {
@@ -141,82 +155,6 @@ class CameraViewModel(application: Application) : AndroidViewModel(application) 
     }
 
 
+
+
 }
-
-/*
-    @SuppressLint("MissingPermission")
-    fun saveScanRecord(imageUri: Uri, croppedUri: Uri) {
-        val user = auth.currentUser ?: return
-        val dateStr = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date())
-
-        fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
-            val scanData = ScanRecord(
-                plate = "AAA-123-A", // luego reemplazar con modelo
-                image = imageUri.toString(),
-                croppedImage = croppedUri.toString(),
-                date = dateStr,
-                location = "${location?.latitude ?: "unknown"}, ${location?.longitude ?: "unknown"}",
-                state = "success", // o "error", según el modelo
-                user = user.uid
-            )
-
-            db.collection("users")
-                .document(user.uid)
-                .collection("scans")
-                .add(scanData)
-                .addOnSuccessListener {
-                    Log.d("Firestore", "Scan guardado exitosamente")
-                }
-                .addOnFailureListener {
-                    Log.e("Firestore", "Error al guardar el escaneo", it)
-                }
-        }
-    }
-
- */
-
-/*
-    fun sendCroppedImageToServer(context: Context, croppedUri: Uri) {
-        Log.d("Upload", "Enviando imagen al servidor: $croppedUri")
-
-        CoroutineScope(Dispatchers.IO).launch {
-            val contentResolver = context.contentResolver
-            var tempFile: File? = null
-
-            try {
-                // Crear archivo temporal desde el Uri
-                val inputStream = contentResolver.openInputStream(croppedUri)
-                tempFile = File.createTempFile("upload_", ".jpg", context.cacheDir)
-                inputStream?.use { input -> tempFile.outputStream().use { output -> input.copyTo(output) } }
-
-                // Crear Multipart
-                val requestFile = tempFile
-                    .asRequestBody("image/jpeg".toMediaTypeOrNull())
-                val body = MultipartBody.Part.createFormData("image", tempFile.name, requestFile)
-
-                // Enviar al servidor
-                val response = RetrofitClient.api.detectPlate(body)
-
-                if (response.isSuccessful) {
-                    val result = response.body()
-                    Log.d("API_RESPONSE", "✅ Placa: ${result?.plate}, Success: ${result?.success}")
-
-                    // Aquí puedes comunicarlo al ViewModel o actualizar UI
-                    // withContext(Dispatchers.Main) { viewModel.onPlateDetected(result?.plate) }
-
-                } else {
-                    val errorMsg = response.errorBody()?.string()
-                    Log.e("API_RESPONSE", "❌ Error en respuesta: $errorMsg")
-                }
-
-            } catch (e: Exception) {
-                Log.e("API_ERROR", "❌ Error al enviar la imagen", e)
-
-            } finally {
-                tempFile?.delete()
-            }
-        }
-    }
-
- */
-
