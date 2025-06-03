@@ -29,6 +29,10 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
+import com.google.mlkit.vision.common.InputImage
+import com.google.mlkit.vision.text.TextRecognition
+import com.google.mlkit.vision.text.latin.TextRecognizerOptions
+import android.graphics.Rect
 
 class CameraViewModel(application: Application) : AndroidViewModel(application) {
     private val db = FirebaseFirestore.getInstance()
@@ -134,8 +138,12 @@ class CameraViewModel(application: Application) : AndroidViewModel(application) 
 
                     Log.d("ServerResponse", "Box: $box")
 
+                    withContext(Dispatchers.Main) {
+                        extractPlateFromBoxAndOcr(context, resizedBitmap, box, originalUri, croppedUri)
+                    }
+
                     // Guardar en Firestore
-                    saveScanRecord(originalUri, croppedUri, plate = "Desconocida", success = success)
+                    //saveScanRecord(originalUri, croppedUri, plate = "Desconocida", success = success)
 
                 } else {
                     val errorMsg = response.errorBody()?.string()
@@ -154,7 +162,76 @@ class CameraViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
+    private fun extractPlateFromBoxAndOcr(
+        context: Context,
+        resizedBitmap: Bitmap,
+        box: List<Float>,
+        imageUri: Uri,
+        croppedUri: Uri
+    ) {
+        if (box.size != 4) {
+            Toast.makeText(context, "❌ Coordenadas de la caja inválidas", Toast.LENGTH_LONG).show()
+            return
+        }
+
+        val (x, y, w, h) = box
+
+        // Tratar las coordenadas como píxeles reales (no normalizados)
+        val left = (x - w * 0.3f).toInt().coerceIn(0, resizedBitmap.width - 1)
+        val top = (y - h * 0.2f).toInt().coerceIn(0, resizedBitmap.height - 1)
+        val right = (x + w * 1.2f).toInt().coerceIn(0, resizedBitmap.width)
+        val bottom = (y + h * 1.2f).toInt().coerceIn(0, resizedBitmap.height)
 
 
+        val cropRect = Rect(left, top, right, bottom)
+
+        val croppedBitmap = Bitmap.createBitmap(
+            resizedBitmap,
+            cropRect.left,
+            cropRect.top,
+            cropRect.width(),
+            cropRect.height()
+        )
+
+        // Mejora del procesamiento: convertir a escala de grises + binarización simple
+        val processedBitmap = Bitmap.createBitmap(croppedBitmap.width, croppedBitmap.height, Bitmap.Config.ARGB_8888)
+        for (i in 0 until croppedBitmap.width) {
+            for (j in 0 until croppedBitmap.height) {
+                val pixel = croppedBitmap.getPixel(i, j)
+                val r = (pixel shr 16) and 0xFF
+                val g = (pixel shr 8) and 0xFF
+                val b = pixel and 0xFF
+                val gray = (0.299 * r + 0.587 * g + 0.114 * b).toInt()
+                val threshold = 120
+                val bw = if (gray < threshold) 0 else 255
+                processedBitmap.setPixel(i, j, (0xFF shl 24) or (bw shl 16) or (bw shl 8) or bw)
+            }
+        }
+
+        val image = InputImage.fromBitmap(processedBitmap, 0)
+        val recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
+
+        recognizer.process(image)
+            .addOnSuccessListener { visionText ->
+                val fullText = visionText.text
+                Log.d("OCR", "Texto detectado: $fullText")
+
+                val regex = Regex("""[A-Z0-9]{2,4}-[A-Z0-9]{1,3}-?[A-Z0-9]{1,2}""")
+                val possiblePlates = visionText.textBlocks
+                    .flatMap { it.lines }
+                    .mapNotNull { line ->
+                        regex.find(line.text)?.value
+                    }
+
+                val plateMatch = possiblePlates.firstOrNull() ?: "NoDetectada"
+                
+                Toast.makeText(context, "🔍 OCR: $plateMatch", Toast.LENGTH_SHORT).show()
+
+                saveScanRecord(imageUri, croppedUri, plate = plateMatch, success = plateMatch != "NoDetectada")
+            }
+            .addOnFailureListener {
+                Toast.makeText(context, "❌ Error OCR: ${it.message}", Toast.LENGTH_LONG).show()
+            }
+    }
 
 }
