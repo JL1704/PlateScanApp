@@ -1,11 +1,15 @@
 package com.deltasquad.platescanapp.presentation.navigation
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -29,18 +33,15 @@ import com.deltasquad.platescanapp.presentation.reports.ReportsScreen
 import com.deltasquad.platescanapp.presentation.stats.StatsScreen
 import com.google.firebase.auth.FirebaseAuth
 import androidx.compose.material3.*
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
-import coil.compose.AsyncImage
+import com.deltasquad.platescanapp.R
 import com.deltasquad.platescanapp.presentation.detailsreport.DetailsReportScreen
 import com.deltasquad.platescanapp.presentation.reports.CreateReportScreen
-import com.deltasquad.platescanapp.presentation.reports.ReportsViewModel
 import kotlinx.coroutines.launch
 
 @Composable
@@ -65,30 +66,53 @@ fun NavigationWrapper(
         onProfileSync()
     }
 
-    // Envuelve Scaffold con ModalNavigationDrawer
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
-            ModalDrawerSheet {
-                Text("Menu", fontSize = 18.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(32.dp))
-
-                Spacer(modifier = Modifier.height(128.dp))
-
+            ModalDrawerSheet(
+                drawerContainerColor = MaterialTheme.colorScheme.surface,
+                drawerTonalElevation = 4.dp
+            ) {
                 Column(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                        .fillMaxSize()
+                        .padding(start = 8.dp, top = 16.dp, bottom = 16.dp, end = 8.dp)
                 ) {
-
-                    AsyncImage(
-                        model = "https://cdn-icons-png.flaticon.com/512/8462/8462143.png",//"https://via.placeholder.com/150",
-                        contentDescription = "Work in progress",
-                        modifier = Modifier
-                            .size(200.dp)
+                    Text(
+                        text = "Menú",
+                        style = MaterialTheme.typography.headlineSmall,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(vertical = 16.dp)
                     )
 
-                    // Aquí puedes agregar más ítems del menú si deseas
+                    Spacer(modifier = Modifier.height(32.dp))
+
+                    DrawerItem(
+                        label = "Reports",
+                        iconRes = R.drawable.ic_reports,
+                        onClick = {
+                            coroutineScope.launch { drawerState.close() }
+                            navController.navigate(Screen.Reports.route)
+                        }
+                    )
+
+                    DrawerItem(
+                        label = "Records",
+                        iconRes = R.drawable.ic_history,
+                        onClick = {
+                            coroutineScope.launch { drawerState.close() }
+                            navController.navigate(Screen.Records.route)
+                        }
+                    )
+
+                    DrawerItem(
+                        label = "Stats",
+                        iconRes = R.drawable.ic_stats,
+                        onClick = {
+                            coroutineScope.launch { drawerState.close() }
+                            navController.navigate(Screen.Stats.route)
+                        }
+                    )
                 }
             }
         }
@@ -181,6 +205,36 @@ fun NavigationWrapper(
     }
 }
 
-
-
-
+@Composable
+fun DrawerItem(
+    label: String,
+    iconRes: Int,
+    onClick: () -> Unit
+) {
+    TextButton(
+        onClick = onClick,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp, horizontal = 0.dp),
+        colors = ButtonDefaults.textButtonColors(
+            contentColor = MaterialTheme.colorScheme.onSurface
+        )
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Start // Alinea a la izquierda
+        ) {
+            Icon(
+                painter = painterResource(id = iconRes),
+                contentDescription = label,
+                modifier = Modifier.size(24.dp),
+                tint = MaterialTheme.colorScheme.onSurface
+            )
+            Spacer(modifier = Modifier.width(12.dp))
+            Text(
+                text = label,
+                style = MaterialTheme.typography.bodyLarge
+            )
+        }
+    }
+}
