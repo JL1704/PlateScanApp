@@ -56,7 +56,7 @@ fun LoginScreen(
                 .fillMaxSize()
                 .background(Black)
                 .padding(horizontal = 24.dp)
-                .padding(top = 32.dp)
+                .padding(top = 12.dp)
                 .padding(innerPadding),
             horizontalAlignment = Alignment.Start
         ) {
