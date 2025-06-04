@@ -224,7 +224,7 @@ class CameraViewModel(application: Application) : AndroidViewModel(application) 
                     }
 
                 val plateMatch = possiblePlates.firstOrNull() ?: "NoDetectada"
-                
+
                 Toast.makeText(context, "🔍 OCR: $plateMatch", Toast.LENGTH_SHORT).show()
 
                 saveScanRecord(imageUri, croppedUri, plate = plateMatch, success = plateMatch != "NoDetectada")
