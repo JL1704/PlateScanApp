@@ -32,13 +32,6 @@ class ProfileViewModel(
         }
     }
 
-    private fun syncProfile() {
-        viewModelScope.launch {
-            repository.createUserProfileIfNotExists()
-            _profile.value = repository.getUserProfile()
-        }
-    }
-
     fun refreshProfile() {
         viewModelScope.launch {
             _isRefreshing.value = true

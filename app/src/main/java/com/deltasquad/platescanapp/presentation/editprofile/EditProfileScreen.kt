@@ -44,7 +44,6 @@ fun EditProfileScreen(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
         uri?.let {
-            // Copiar imagen al almacenamiento interno
             val inputStream = context.contentResolver.openInputStream(uri)
             val fileName = "profile_image.jpg"
             val file = File(context.filesDir, fileName)
@@ -59,6 +58,12 @@ fun EditProfileScreen(
         }
     }
 
+    // Estados de validación
+    var showError by remember { mutableStateOf(false) }
+
+    val isUsernameValid = username.isNotBlank()
+    val isPhoneValid = phone.matches(Regex("^[0-9]{8,15}$")) // 8 a 15 dígitos
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -67,7 +72,7 @@ fun EditProfileScreen(
     ) {
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Imagen de perfil con botón para cambiar
+        // Imagen de perfil
         imageUri?.let {
             Image(
                 painter = rememberAsyncImagePainter(it),
@@ -95,19 +100,33 @@ fun EditProfileScreen(
 
         OutlinedTextField(
             value = username,
-            onValueChange = { username = it },
+            onValueChange = {
+                username = it
+                showError = false
+            },
             label = { Text("Username") },
+            isError = showError && !isUsernameValid,
             modifier = Modifier.fillMaxWidth()
         )
+        if (showError && !isUsernameValid) {
+            Text("Username cannot be empty", color = MaterialTheme.colorScheme.error)
+        }
 
         Spacer(modifier = Modifier.height(16.dp))
 
         OutlinedTextField(
             value = phone,
-            onValueChange = { phone = it },
+            onValueChange = {
+                phone = it
+                showError = false
+            },
             label = { Text("Phone Number") },
+            isError = showError && !isPhoneValid,
             modifier = Modifier.fillMaxWidth()
         )
+        if (showError && !isPhoneValid) {
+            Text("Phone number must be 8–15 digits", color = MaterialTheme.colorScheme.error)
+        }
 
         Spacer(modifier = Modifier.height(32.dp))
 
@@ -124,7 +143,11 @@ fun EditProfileScreen(
 
             Button(
                 onClick = {
-                    onSave(username, phone, imageUri)
+                    if (isUsernameValid && isPhoneValid) {
+                        onSave(username, phone, imageUri)
+                    } else {
+                        showError = true
+                    }
                 },
                 colors = ButtonDefaults.buttonColors(containerColor = primaryGreen)
             ) {
