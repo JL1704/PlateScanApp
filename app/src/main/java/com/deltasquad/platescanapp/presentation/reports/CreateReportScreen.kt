@@ -36,9 +36,9 @@ import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
-import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.ui.platform.LocalContext
-import androidx.core.net.toFile
 import coil.compose.rememberAsyncImagePainter
 import java.io.File
 import java.io.FileOutputStream
@@ -76,6 +76,8 @@ fun CreateReportScreen(
     val context = LocalContext.current
     var imageUri by remember { mutableStateOf<Uri?>(null) }
 
+    val scrollState = rememberScrollState()
+
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
@@ -102,7 +104,8 @@ fun CreateReportScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .padding(16.dp)
+            .verticalScroll(scrollState),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         // Encabezado...
@@ -222,8 +225,6 @@ fun CreateReportScreen(
                     .height(180.dp)
             )
         }
-
-
         Button(
             onClick = {
                 viewModel.createReport(
