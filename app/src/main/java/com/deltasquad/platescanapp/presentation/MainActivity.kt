@@ -28,38 +28,53 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 
+/**
+ * Actividad principal de la aplicación. Se encarga de inicializar las dependencias clave
+ * (Firebase, ViewModels, repositorios) y de establecer el contenido de la interfaz
+ * utilizando Jetpack Compose.
+ */
 class MainActivity : ComponentActivity() {
 
+    // Controlador de navegación para gestionar el flujo de pantallas
     private lateinit var navHostController: NavHostController
 
     @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        // Inicializa Firebase (necesario para usar Auth y Firestore)
         FirebaseApp.initializeApp(this)
 
-        // Inicializamos dependencias necesarias
+        // Configuración de dependencias
         val firestore = FirebaseFirestore.getInstance()
         val auth = Firebase.auth
         val repository = ProfileRepository(firestore, auth)
         val profileViewModel = ProfileViewModel(repository)
 
-        // ViewModel de autenticación con Factory
+        // Inicializa AuthViewModel utilizando una factory personalizada
         val authViewModel: AuthViewModel = ViewModelProvider(
             this,
             AuthViewModelFactory(auth, applicationContext)
         )[AuthViewModel::class.java]
 
+        // Permite que el contenido se dibuje detrás de las barras del sistema
         enableEdgeToEdge()
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
+        // Establece el contenido de la actividad usando Compose
         setContent {
+            // Instancia de navegación para Compose Navigation
             navHostController = rememberNavController()
+
+            // Calcula el tamaño de la ventana para una UI adaptativa
             val windowSize = calculateWindowSizeClass(activity = this)
 
+            // Aplica el tema personalizado de la app con diseño adaptativo
             PlateScanAppTheme(windowSize = windowSize.widthSizeClass) {
+                // Controlador del sistema para manipular la UI del sistema (barra de estado, etc.)
                 val systemUiController = rememberSystemUiController()
 
+                // Establece la barra de estado como transparente y con iconos claros
                 SideEffect {
                     systemUiController.setSystemBarsColor(
                         color = Transparent,
@@ -67,9 +82,11 @@ class MainActivity : ComponentActivity() {
                     )
                 }
 
+                // Estructura base para la UI de Compose con soporte de padding
                 Scaffold(
                     modifier = Modifier.fillMaxSize()
                 ) { paddingValues ->
+                    // Controlador de navegación principal de la app
                     AppNavigation(
                         navController = navHostController,
                         modifier = Modifier.padding(paddingValues),
@@ -81,36 +98,3 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-
-
-/*
-@Composable
-fun TestScreen() {
-    ContentCard(
-        imageUrl = "https://picsum.photos/200/300",
-        plateNumber = "1234 ABC",
-        date = "01/01/2025",
-        description = "Prueba de tarjeta",
-        onClick = {}
-    )
-}
-
-@Composable
-fun TestCrashlytics(name: String, modifier: Modifier = Modifier) {
-    Spacer(modifier = Modifier.height(32.dp))
-    Text(
-        text = "Hello $name!",
-        modifier = modifier.clickable {
-            throw RuntimeException("Esto es una prueba")
-        }
-    )
-}
-
-
-@Preview(showBackground = true)
-@Composable
-fun AppPreview() {
-    PlateScanAppTheme {
-        //HomeScreen()
-    }
-}*/
