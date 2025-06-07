@@ -45,14 +45,6 @@
 6. Detected plate number and metadata are saved to Firestore.
 7. User can view scan history, create reports, and see stats.
 
----
-
-
----
-
-## 📷 Screenshots
-
-*(Insert screenshots here to visually showcase features)*
 
 ---
 
@@ -72,11 +64,11 @@
 
 ---
 
-## 👥 Authors
+## 👥 Author
 
 - José Luis Calderón Galarza
 
-## 🤝 Créditos adicionales 
+## 🤝 Additional credits
 - Jesús Roberto Dávila González  
 - Jared Esaú Sandoval Morales  
 - Aarón Mireles Barrón  
